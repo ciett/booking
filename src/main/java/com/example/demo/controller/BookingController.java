@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.entity.Booking;
-import com.example.demo.model.service.BookingService;
+import com.example.demo.entity.Booking;
+import com.example.demo.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

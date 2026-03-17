@@ -1,12 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.entity.Hotel;
-import com.example.demo.model.service.HotelService;
+import com.example.demo.entity.Hotel;
+import com.example.demo.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.List;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/hotels")
@@ -22,8 +24,16 @@ public class HotelController {
     }
 
     @GetMapping("/search")
-    public List<Hotel> searchHotels(@RequestParam String city) {
-        return hotelService.searchHotels(city);
+    public List<Hotel> searchHotels(
+            @RequestParam String city,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut) {
+        return hotelService.searchHotels(city, checkIn, checkOut);
+    }
+
+    @GetMapping("/cities")
+    public List<String> getDistinctCities() {
+        return hotelService.getDistinctCities();
     }
 
     @GetMapping("/{id}")

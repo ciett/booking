@@ -30,6 +30,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/hotels/**").permitAll()
                         .requestMatchers("/api/room-types/**").permitAll()
+                        .requestMatchers("/api/flights/**").permitAll()
+                        .requestMatchers("/api/cars/**").permitAll()
+                        .requestMatchers("/api/attractions/**").permitAll()
+                        .requestMatchers("/api/airport-taxis/**").permitAll()
                         .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll() // Mở khóa
                                                                                                             // trang chủ
                         .requestMatchers("/error").permitAll()

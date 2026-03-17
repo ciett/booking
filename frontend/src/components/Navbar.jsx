@@ -1,14 +1,25 @@
-import React from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 
 const Navbar = () => {
+    const location = useLocation();
+
     // Hàm helper để định dạng class cho các mục Menu
-    const navLinkClass = ({ isActive }) => 
-        `flex items-center space-x-2 rounded-full px-4 py-2 font-semibold transition-colors text-white no-underline border ${
+    const navLinkClass = (isActive) => 
+        `flex items-center space-x-2 rounded-full px-4 py-2 font-semibold transition-colors text-white no-underline ${
             isActive 
-            ? 'border-white bg-booking-dark' // Class khi đang ở trang này
-            : 'border-transparent hover:bg-white/10' // Class khi ở trang khác
+            ? 'border border-white bg-booking-dark' // Class khi đang ở trang này
+            : 'hover:bg-white/10' // Class khi ở trang khác
         }`;
+
+    const navItems = [
+        { path: '/', icon: 'fa-bed', label: 'Lưu trú' },
+        { path: '/flights', icon: 'fa-plane', label: 'Chuyến bay' },
+        { path: '/flight-hotel', icon: 'fa-suitcase', label: 'Chuyến bay + Khách sạn' },
+        { path: '/car-rentals', icon: 'fa-car', label: 'Thuê xe' },
+        { path: '/attractions', icon: 'fa-fort-awesome', label: 'Địa điểm tham quan' },
+        { path: '/airport-taxis', icon: 'fa-taxi', label: 'Taxi sân bay' },
+    ];
 
     return (
         <header className="bg-booking-blue text-white">
@@ -50,29 +61,21 @@ const Navbar = () => {
             {/* Sub Navbar (Menu điều hướng chính) */}
             <div className="max-w-6xl mx-auto px-4 pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 <div className="flex space-x-2">
-                    <NavLink to="/" className={navLinkClass}>
-                        <i className="fa-solid fa-bed"></i> <span>Lưu trú</span>
-                    </NavLink>
+                    {navItems.map((item) => {
+                        const isActive = location.pathname === item.path ||
+                            (item.path !== '/' && location.pathname.startsWith(item.path));
 
-                    <NavLink to="/flights" className={navLinkClass}>
-                        <i className="fa-solid fa-plane"></i> <span>Chuyến bay</span>
-                    </NavLink>
-
-                    <NavLink to="/flight-hotel" className={navLinkClass}>
-                        <i className="fa-solid fa-suitcase"></i> <span>Chuyến bay + Khách sạn</span>
-                    </NavLink>
-
-                    <NavLink to="/car-rentals" className={navLinkClass}>
-                        <i className="fa-solid fa-car"></i> <span>Thuê xe</span>
-                    </NavLink>
-
-                    <NavLink to="/attractions" className={navLinkClass}>
-                        <i className="fa-solid fa-fort-awesome"></i> <span>Địa điểm tham quan</span>
-                    </NavLink>
-
-                    <NavLink to="/airport-taxis" className={navLinkClass}>
-                        <i className="fa-solid fa-taxi"></i> <span>Taxi sân bay</span>
-                    </NavLink>
+                        return (
+                            <Link
+                                key={item.path}
+                                to={item.path}
+                                className={navLinkClass(isActive)}
+                            >
+                                <i className={`fa-solid ${item.icon}`}></i>
+                                <span>{item.label}</span>
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
         </header>
