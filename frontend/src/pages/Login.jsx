@@ -21,14 +21,14 @@ const Login = () => {
                 password
             });
 
-            // Save token to localStorage
+            // Lưu token vào localStorage
             localStorage.setItem('booking_token', response.data.token);
             localStorage.setItem('booking_user', response.data.email);
 
-            // Redirect to home
+            // Chuyển hướng về trang chủ
             navigate('/');
         } catch (err) {
-            setError(err.response?.data?.message || 'Invalid credentials. Please try again.');
+            setError(err.response?.data?.message || 'Email hoặc mật khẩu không đúng. Vui lòng thử lại.');
         } finally {
             setLoading(false);
         }
@@ -38,15 +38,15 @@ const Login = () => {
         <div className="grow flex items-center justify-center p-4 bg-gray-50 h-screen">
             <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-100">
                 <Link to="/" className="text-booking-blue font-bold text-2xl block text-center mb-6">Booking.com</Link>
-                <h1 className="text-2xl font-bold mb-6 text-gray-900">Sign in to your account</h1>
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">Đăng nhập vào tài khoản</h1>
 
                 <form onSubmit={handleLogin} className="space-y-4">
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Email address</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Địa chỉ email</label>
                         <input
                             type="email"
                             required
-                            placeholder="Enter your email address"
+                            placeholder="Nhập địa chỉ email của bạn"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
@@ -54,11 +54,11 @@ const Login = () => {
                     </div>
 
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Password</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Mật khẩu</label>
                         <input
                             type="password"
                             required
-                            placeholder="Enter your password"
+                            placeholder="Nhập mật khẩu"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
@@ -76,13 +76,13 @@ const Login = () => {
                         disabled={loading}
                         className="w-full bg-booking-blue text-white font-bold py-3 px-4 rounded hover:bg-booking-dark transition-colors mt-2 disabled:opacity-70"
                     >
-                        {loading ? 'Checking...' : 'Sign in'}
+                        {loading ? 'Đang kiểm tra...' : 'Đăng nhập'}
                     </button>
                 </form>
 
                 <div className="mt-6 text-center text-sm">
-                    <span className="text-gray-600">Don't have an account? </span>
-                    <Link to="/register" className="text-booking-blue hover:underline font-semibold">Register here</Link>
+                    <span className="text-gray-600">Bạn chưa có tài khoản? </span>
+                    <Link to="/register" className="text-booking-blue hover:underline font-semibold">Đăng ký tại đây</Link>
                 </div>
             </div>
         </div>

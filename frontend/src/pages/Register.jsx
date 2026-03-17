@@ -29,7 +29,10 @@ const Register = () => {
         try {
             const response = await axios.post('http://localhost:8080/api/auth/register', formData);
 
-            setStatus({ type: 'success', message: response.data.message || 'Registration successful! Redirecting...' });
+            setStatus({ 
+                type: 'success', 
+                message: response.data.message || 'Đăng ký thành công! Đang chuyển hướng...' 
+            });
 
             setTimeout(() => {
                 navigate('/login');
@@ -37,7 +40,7 @@ const Register = () => {
         } catch (err) {
             setStatus({
                 type: 'error',
-                message: err.response?.data?.message || 'Registration failed. Please try again.'
+                message: err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.'
             });
             setLoading(false);
         }
@@ -47,16 +50,16 @@ const Register = () => {
         <div className="grow flex items-center justify-center p-4 bg-gray-50 h-screen">
             <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-100">
                 <Link to="/" className="text-booking-blue font-bold text-2xl block text-center mb-6">Booking.com</Link>
-                <h1 className="text-2xl font-bold mb-6 text-gray-900">Create an account</h1>
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">Tạo tài khoản</h1>
 
                 <form onSubmit={handleRegister} className="space-y-4">
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Full Name</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Họ và tên</label>
                         <input
                             type="text"
                             name="fullName"
                             required
-                            placeholder="Enter your full name"
+                            placeholder="Nhập họ và tên của bạn"
                             value={formData.fullName}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
@@ -64,11 +67,11 @@ const Register = () => {
                     </div>
 
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Phone Number</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Số điện thoại</label>
                         <input
                             type="tel"
                             name="phoneNumber"
-                            placeholder="Enter your phone number"
+                            placeholder="Nhập số điện thoại"
                             value={formData.phoneNumber}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
@@ -76,7 +79,7 @@ const Register = () => {
                     </div>
 
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Email address</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Địa chỉ email</label>
                         <input
                             type="email"
                             name="email"
@@ -89,12 +92,12 @@ const Register = () => {
                     </div>
 
                     <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Password</label>
+                        <label className="block mb-1 text-sm font-semibold text-gray-700">Mật khẩu</label>
                         <input
                             type="password"
                             name="password"
                             required
-                            placeholder="Create a strong password"
+                            placeholder="Tạo mật khẩu mạnh"
                             value={formData.password}
                             onChange={handleChange}
                             className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
@@ -113,13 +116,13 @@ const Register = () => {
                         disabled={loading}
                         className="w-full bg-booking-blue text-white font-bold py-3 px-4 rounded hover:bg-booking-dark transition-colors mt-2 disabled:opacity-70"
                     >
-                        {loading ? 'Creating...' : 'Create account'}
+                        {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
                     </button>
                 </form>
 
                 <div className="mt-6 text-center text-sm">
-                    <span className="text-gray-600">Already have an account? </span>
-                    <Link to="/login" className="text-booking-blue hover:underline font-semibold">Sign in</Link>
+                    <span className="text-gray-600">Bạn đã có tài khoản? </span>
+                    <Link to="/login" className="text-booking-blue hover:underline font-semibold">Đăng nhập</Link>
                 </div>
             </div>
         </div>

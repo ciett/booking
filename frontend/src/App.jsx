@@ -10,7 +10,7 @@ import FlightAndHotel from "./pages/FlightAndHotel";
 import CarRental from "./pages/CarRental";
 import Attractions from "./pages/Attractions";
 import AirportTaxis from "./pages/AirportTaxis";
-
+import ListProperty from './pages/ListProperty';
 
 function AppContent() {
   const location = useLocation();
@@ -30,6 +30,7 @@ function AppContent() {
         <Route path="/car-rentals" element={<CarRental />} />
         <Route path="/attractions" element={<Attractions />} />
         <Route path="/airport-taxis" element={<AirportTaxis />} />
+        <Route path="/list-your-property" element={<ListProperty />} />
       </Routes>
 
       {!isAuthPage && <Footer />}
