@@ -1,0 +1,262 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------------< com.example:demo >--------------------------
+[INFO] Building demo 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.4.0:clean (default-clean) @ demo ---
+[INFO] Deleting C:\Users\Admin\Documents\admin\de-an\demo\target
+[INFO] 
+[INFO] >>> spring-boot:3.4.0:run (default-cli) > test-compile @ demo >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ demo ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ demo ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 57 source files with javac [debug parameters release 17] to target\classes
+[WARNING] /C:/Users/Admin/Documents/admin/de-an/demo/src/main/java/com/example/demo/entity/Booking.java:[24,27] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /C:/Users/Admin/Documents/admin/de-an/demo/src/main/java/com/example/demo/entity/Airport.java:[16,20] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[WARNING] /C:/Users/Admin/Documents/admin/de-an/demo/src/main/java/com/example/demo/entity/User.java:[35,22] @Builder will ignore the initializing expression entirely. If you want the initializing expression to serve as default, add @Builder.Default. If it is not supposed to be settable during building, make the field final.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ demo ---
+[INFO] skip non existing resourceDirectory C:\Users\Admin\Documents\admin\de-an\demo\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ demo ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 1 source file with javac [debug parameters release 17] to target\test-classes
+[INFO] 
+[INFO] <<< spring-boot:3.4.0:run (default-cli) < test-compile @ demo <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.4.0:run (default-cli) @ demo ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.4.0)
+
+2026-03-21T11:34:51.196+07:00  INFO 316 --- [demo] [           main] com.example.demo.DemoApplication         : Starting DemoApplication using Java 17.0.12 with PID 316 (C:\Users\Admin\Documents\admin\de-an\demo\target\classes started by Admin in C:\Users\Admin\Documents\admin\de-an\demo)
+2026-03-21T11:34:51.200+07:00  INFO 316 --- [demo] [           main] com.example.demo.DemoApplication         : No active profile set, falling back to 1 default profile: "default"
+2026-03-21T11:34:52.002+07:00  INFO 316 --- [demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-21T11:34:52.113+07:00  INFO 316 --- [demo] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 102 ms. Found 16 JPA repository interfaces.
+2026-03-21T11:34:52.810+07:00  INFO 316 --- [demo] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
+2026-03-21T11:34:52.825+07:00  INFO 316 --- [demo] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-21T11:34:52.825+07:00  INFO 316 --- [demo] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.33]
+2026-03-21T11:34:52.916+07:00  INFO 316 --- [demo] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-21T11:34:52.917+07:00  INFO 316 --- [demo] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1663 ms
+2026-03-21T11:34:53.072+07:00  INFO 316 --- [demo] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-21T11:34:53.133+07:00  INFO 316 --- [demo] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.6.2.Final
+2026-03-21T11:34:53.171+07:00  INFO 316 --- [demo] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-21T11:34:53.484+07:00  INFO 316 --- [demo] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-21T11:34:53.517+07:00  INFO 316 --- [demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-21T11:34:53.738+07:00  INFO 316 --- [demo] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@76b5a559
+2026-03-21T11:34:53.742+07:00  INFO 316 --- [demo] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-21T11:34:53.793+07:00  WARN 316 --- [demo] [           main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2026-03-21T11:34:53.799+07:00  WARN 316 --- [demo] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-21T11:34:53.827+07:00  INFO 316 --- [demo] [           main] org.hibernate.orm.connections.pooling    : HHH10001005: Database info:
+	Database JDBC URL [Connecting through datasource 'HikariDataSource (HikariPool-1)']
+	Database driver: undefined/unknown
+	Database version: 5.5.5
+	Autocommit mode: undefined/unknown
+	Isolation level: undefined/unknown
+	Minimum pool size: undefined/unknown
+	Maximum pool size: undefined/unknown
+2026-03-21T11:34:55.217+07:00  INFO 316 --- [demo] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table flight_bookings 
+       modify column seat_class ENUM('ECONOMY', 'BUSINESS', 'FIRST_CLASS') DEFAULT 'ECONOMY'
+2026-03-21T11:34:55.478+07:00  INFO 316 --- [demo] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-21T11:34:55.927+07:00  INFO 316 --- [demo] [           main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-21T11:34:56.552+07:00  INFO 316 --- [demo] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name customUserDetailsService
+2026-03-21T11:34:56.933+07:00  WARN 316 --- [demo] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-21T11:34:57.500+07:00  WARN 316 --- [demo] [           main] ion$DefaultTemplateResolverConfiguration : Cannot find template location: classpath:/templates/ (please add some templates, check your Thymeleaf configuration, or set spring.thymeleaf.check-template-location=false)
+2026-03-21T11:34:57.804+07:00  INFO 316 --- [demo] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8081 (http) with context path '/'
+2026-03-21T11:34:57.817+07:00  INFO 316 --- [demo] [           main] com.example.demo.DemoApplication         : Started DemoApplication in 7.111 seconds (process running for 7.48)
+2026-03-21T11:35:26.690+07:00  INFO 316 --- [demo] [nio-8081-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-21T11:35:26.690+07:00  INFO 316 --- [demo] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-03-21T11:35:26.691+07:00  INFO 316 --- [demo] [nio-8081-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.airline,
+        aa1_0.code,
+        aa1_0.city,
+        aa1_0.country,
+        aa1_0.name,
+        f1_0.arrival_time,
+        da1_0.code,
+        da1_0.city,
+        da1_0.country,
+        da1_0.name,
+        f1_0.departure_time,
+        f1_0.flight_number,
+        f1_0.price 
+    from
+        flights f1_0 
+    join
+        airports da1_0 
+            on da1_0.code=f1_0.departure_airport_code 
+    join
+        airports aa1_0 
+            on aa1_0.code=f1_0.arrival_airport_code 
+    where
+        f1_0.departure_airport_code=? 
+        and f1_0.arrival_airport_code=? 
+        and f1_0.departure_time>=? 
+        and f1_0.departure_time<=?
+Hibernate: 
+    select
+        a1_0.code,
+        a1_0.city,
+        a1_0.country,
+        a1_0.name 
+    from
+        airports a1_0
+Hibernate: 
+    select
+        a1_0.code,
+        a1_0.city,
+        a1_0.country,
+        a1_0.name 
+    from
+        airports a1_0
+Hibernate: 
+    select
+        f1_0.id,
+        f1_0.airline,
+        aa1_0.code,
+        aa1_0.city,
+        aa1_0.country,
+        aa1_0.name,
+        f1_0.arrival_time,
+        da1_0.code,
+        da1_0.city,
+        da1_0.country,
+        da1_0.name,
+        f1_0.departure_time,
+        f1_0.flight_number,
+        f1_0.price 
+    from
+        flights f1_0 
+    join
+        airports da1_0 
+            on da1_0.code=f1_0.departure_airport_code 
+    join
+        airports aa1_0 
+            on aa1_0.code=f1_0.arrival_airport_code 
+    where
+        f1_0.departure_airport_code=? 
+        and f1_0.arrival_airport_code=? 
+        and f1_0.departure_time>=? 
+        and f1_0.departure_time<=?
+Hibernate: 
+    select
+        cl1_0.id,
+        cl1_0.city,
+        cl1_0.name 
+    from
+        car_locations cl1_0
+Hibernate: 
+    select
+        cl1_0.id,
+        cl1_0.city,
+        cl1_0.name 
+    from
+        car_locations cl1_0
+Hibernate: 
+    select
+        a1_0.code,
+        a1_0.city,
+        a1_0.country,
+        a1_0.name 
+    from
+        airports a1_0
+Hibernate: 
+    select
+        a1_0.code,
+        a1_0.city,
+        a1_0.country,
+        a1_0.name 
+    from
+        airports a1_0
+Hibernate: 
+    select
+        distinct h1_0.city 
+    from
+        hotels h1_0 
+    where
+        h1_0.city is not null
+Hibernate: 
+    select
+        distinct h1_0.city 
+    from
+        hotels h1_0 
+    where
+        h1_0.city is not null
+Hibernate: 
+    select
+        h1_0.id,
+        h1_0.address,
+        h1_0.city,
+        h1_0.description,
+        h1_0.name,
+        h1_0.rating 
+    from
+        hotels h1_0 
+    where
+        upper(h1_0.city) like upper(?) escape '\\'
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.password,
+        u1_0.phone_number,
+        u1_0.role 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    insert 
+    into
+        users
+        (created_at, email, full_name, password, phone_number, role) 
+    values
+        (?, ?, ?, ?, ?, ?)
+Hibernate: 
+    select
+        u1_0.id,
+        u1_0.created_at,
+        u1_0.email,
+        u1_0.full_name,
+        u1_0.password,
+        u1_0.phone_number,
+        u1_0.role 
+    from
+        users u1_0 
+    where
+        u1_0.email=?
+Hibernate: 
+    select
+        distinct h1_0.city 
+    from
+        hotels h1_0 
+    where
+        h1_0.city is not null
+Hibernate: 
+    select
+        distinct h1_0.city 
+    from
+        hotels h1_0 
+    where
+        h1_0.city is not null
