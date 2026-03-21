@@ -22,4 +22,8 @@ public class AttractionService {
     public List<Attraction> getAllAttractions() {
         return attractionRepository.findAll();
     }
+
+    public List<String> getDistinctCities() {
+        return attractionRepository.findDistinctCities();
+    }
 }

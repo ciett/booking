@@ -95,6 +95,7 @@ const CarRental = () => {
                     variant="borderless"
                     className="w-full"
                     onChange={(val) => setPickupCity(val)}
+                    filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
                     options={locations.map(city => ({ value: city, label: city }))}
                   />
                 </div>

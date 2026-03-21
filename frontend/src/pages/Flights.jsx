@@ -93,6 +93,7 @@ const Flights = () => {
                     variant="borderless"
                     className="w-full"
                     onChange={(val) => setDepartureCode(val)}
+                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                     options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
                 </div>
               </div>
@@ -108,6 +109,7 @@ const Flights = () => {
                     variant="borderless"
                     className="w-full"
                     onChange={(val) => setArrivalCode(val)}
+                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
                     options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
                 </div>
               </div>

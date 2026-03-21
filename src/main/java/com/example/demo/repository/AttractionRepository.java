@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AttractionRepository extends JpaRepository<Attraction, Long> {
+    @org.springframework.data.jpa.repository.Query("SELECT DISTINCT a.city FROM Attraction a WHERE a.city IS NOT NULL")
+    java.util.List<String> findDistinctCities();
 }

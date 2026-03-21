@@ -27,4 +27,9 @@ public class AttractionController {
             @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE_TIME) java.time.LocalDateTime endDate) {
         return attractionService.searchAttractions(city, startDate, endDate);
     }
+
+    @GetMapping("/cities")
+    public List<String> getDistinctCities() {
+        return attractionService.getDistinctCities();
+    }
 }

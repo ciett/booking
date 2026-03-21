@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatePicker, ConfigProvider, InputNumber, Popover } from 'antd';
+import { DatePicker, ConfigProvider, InputNumber, Popover, AutoComplete } from 'antd';
 import dayjs from 'dayjs';
+import axios from 'axios';
 
 const { RangePicker } = DatePicker;
 
@@ -18,6 +19,19 @@ const Home = () => {
         children: 0,
         room: 1,
     });
+    const [cities, setCities] = useState([]);
+
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                const response = await axios.get('/api/hotels/cities');
+                setCities(response.data);
+            } catch (error) {
+                console.error("Error fetching hotel cities", error);
+            }
+        };
+        fetchCities();
+    }, []);
 
     // Hàm điều hướng khi bấm nút Tìm kiếm
     const handleSearch = (e) => {
@@ -63,12 +77,17 @@ const Home = () => {
                         {/* Điểm đến */}
                         <div className="flex-1 flex items-center p-3 border-b md:border-b-0 md:border-r border-yellow-400">
                             <i className="fa-solid fa-bed text-gray-400 mr-3 text-xl"></i>
-                            <input 
-                                type="text" 
-                                placeholder="Bạn muốn đến đâu?" 
+                            <AutoComplete
+                                options={cities.map(city => ({ value: city }))}
+                                filterOption={(inputValue, option) =>
+                                    option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                                }
+                                style={{ width: '100%' }}
+                                placeholder="Bạn muốn đến đâu?"
                                 value={destination}
-                                onChange={(e) => setDestination(e.target.value)}
-                                className="w-full focus:outline-none text-gray-700 font-semibold" 
+                                onChange={(val) => setDestination(val)}
+                                variant="borderless"
+                                className="w-full font-semibold custom-home-autocomplete"
                             />
                         </div>
 

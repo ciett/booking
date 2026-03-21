@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { DatePicker, Input, TimePicker, ConfigProvider } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { DatePicker, Input, TimePicker, ConfigProvider, Select } from 'antd';
 import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import axios from 'axios';
@@ -12,6 +12,19 @@ const AirportTaxis = () => {
   const [time, setTime] = useState(null);
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [airports, setAirports] = useState([]);
+
+  useEffect(() => {
+    const fetchAirports = async () => {
+      try {
+        const response = await axios.get('/api/flights/airports');
+        setAirports(response.data);
+      } catch (error) {
+        console.error("Error fetching airports", error);
+      }
+    };
+    fetchAirports();
+  }, []);
 
   const handleSearch = async () => {
     if (!airportCode) {
@@ -58,13 +71,15 @@ const AirportTaxis = () => {
                 <i className="fa-solid fa-plane-arrival text-gray-400 ml-2"></i>
                 <div className="flex flex-col w-full">
                   <span className="text-[10px] font-bold text-gray-500 uppercase">Điểm đón</span>
-                  <Input
+                  <Select
+                    showSearch
                     placeholder="Nhập sân bay..."
                     variant="borderless"
                     className="w-full"
-                    value={airportCode}
-                    onChange={(e) => setAirportCode(e.target.value)}
-                    onPressEnter={handleSearch}
+                    value={airportCode || undefined}
+                    onChange={(val) => setAirportCode(val)}
+                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                    options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))}
                   />
                 </div>
               </div>

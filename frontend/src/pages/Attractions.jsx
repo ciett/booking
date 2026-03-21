@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatePicker, Input, ConfigProvider } from 'antd';
+import { DatePicker, Input, ConfigProvider, AutoComplete } from 'antd';
 import { Button } from '@mui/material';
 import dayjs from 'dayjs';
+import axios from 'axios';
 
 const { RangePicker } = DatePicker;
 
@@ -13,27 +14,40 @@ const Attractions = () => {
 
     const disabledDate = (current) => current && current < dayjs().startOf('day');
 
-  const [city, setCity] = useState('');
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
+    const [results, setResults] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [cities, setCities] = useState([]);
 
-  const handleSearch = async () => {
-    if (!city) {
-      alert("Vui lòng nhập thành phố bạn muốn đến");
-      return;
-    }
-    setLoading(true);
-    try {
-      const response = await axios.get(`/api/attractions/search`, {
-        params: { city: city }
-      });
-      setResults(response.data);
-    } catch (error) {
-      console.error("Error fetching attractions", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    useEffect(() => {
+        const fetchCities = async () => {
+            try {
+                const response = await axios.get('/api/attractions/cities');
+                setCities(response.data);
+            } catch (error) {
+                console.error("Error fetching attraction cities", error);
+            }
+        };
+        fetchCities();
+    }, []);
+
+    const handleSearch = async (cityName) => {
+        const searchCity = typeof cityName === 'string' ? cityName : city;
+        if (!searchCity) {
+            alert("Vui lòng nhập thành phố bạn muốn đến");
+            return;
+        }
+        setLoading(true);
+        try {
+            const response = await axios.get(`/api/attractions/search`, {
+                params: { city: searchCity }
+            });
+            setResults(response.data);
+        } catch (error) {
+            console.error("Error fetching attractions", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     return (
         <ConfigProvider theme={{ token: { colorPrimary: '#003b95' } }}>
@@ -55,13 +69,25 @@ const Attractions = () => {
               <i className="fa-solid fa-location-dot text-gray-400 ml-2"></i>
               <div className="flex flex-col w-full">
                 <span className="text-[10px] font-bold text-gray-500 uppercase">Bạn muốn đi đâu?</span>
-                <Input
+                <AutoComplete
+                  options={cities.map(city => ({ value: city }))}
+                  filterOption={(inputValue, option) =>
+                      option.value.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
+                  }
                   placeholder="Thành phố, điểm tham quan..."
                   variant="borderless"
                   className="w-full"
                   value={city}
-                  onChange={(e) => setCity(e.target.value)}
-                  onPressEnter={handleSearch}
+                  onChange={(val) => setCity(val)}
+                  onSelect={(val) => {
+                      setCity(val);
+                      handleSearch(val);
+                  }}
+                  onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                          handleSearch();
+                      }
+                  }}
                 />
               </div>
             </div>
