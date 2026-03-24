@@ -36,7 +36,7 @@ const Navbar = () => {
 
     return (
         <header className="bg-booking-blue text-white">
-            <div className="section-container py-4 flex items-center justify-between">
+            <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold tracking-tight">Booking.com</Link>
 
@@ -58,10 +58,10 @@ const Navbar = () => {
                     <div className="flex space-x-2 items-center">
                         {token ? (
                             <>
-                                <div className="flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors">
+                                <Link to="/account" className="flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors no-underline">
                                     <PersonIcon className="text-white" />
                                     <span className="text-white font-bold">{userName}</span>
-                                </div>
+                                </Link>
                                 <button 
                                     onClick={handleLogout}
                                     className="bg-white text-booking-blue px-4 py-2 rounded font-bold hover:bg-gray-100 transition-colors text-sm"
@@ -89,7 +89,7 @@ const Navbar = () => {
             </div>
 
             {/* Sub Navbar (Menu điều hướng chính) */}
-            <div className="section-container pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <div className="max-w-6xl mx-auto px-4 pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 <div className="flex space-x-2">
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path ||

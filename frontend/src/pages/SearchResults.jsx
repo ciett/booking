@@ -26,7 +26,7 @@ const SearchResults = () => {
                 {/* CỘT PHẢI */}
                 <main className="flex-1">
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">TP. Hồ Chí Minh: tìm thấy {dummyHotels.length} chỗ nghỉ</h1>
-                    
+
                     {/* Thanh Tab sắp xếp nhanh */}
                     <div className="flex overflow-x-auto border-b border-gray-200 mb-6">
                         <button className="px-4 py-3 text-sm font-bold text-[#006ce4] border-b-2 border-[#006ce4] whitespace-nowrap">Lựa chọn hàng đầu</button>

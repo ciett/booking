@@ -9,7 +9,7 @@ const Footer = () => {
                 <div className="h-px bg-white bg-opacity-20 mb-6"></div>
                 
                 <ul className="flex flex-wrap justify-center space-x-4 space-y-2 md:space-y-0 text-sm font-semibold underline mb-4">
-                    <li><a href="#">Tài khoản của bạn</a></li>
+                    <li><Link to="/account" className="hover:text-blue-400">Tài khoản của bạn</Link></li>
                     <Link to="/customer-service" className="hover:text-blue-400">
                         Dịch vụ khách hàng
                     </Link>
