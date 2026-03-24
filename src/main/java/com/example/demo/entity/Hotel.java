@@ -18,4 +18,13 @@ public class Hotel {
     private String description;
     @Column(precision = 2, scale = 1)
     private java.math.BigDecimal rating;
+
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Transient
+    private Integer price;
+
+    @Transient
+    private Long reviewCount;
 }

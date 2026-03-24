@@ -96,50 +96,50 @@ INSERT INTO car_locations (id, name, city) VALUES
 -- ==========================================
 -- 4. Create Hotels (30 hotels)
 -- ==========================================
-INSERT INTO hotels (id, name, description, address, city, rating) VALUES 
+INSERT INTO hotels (id, name, description, address, city, rating, image_url) VALUES 
 -- HCM
-(1, 'Vinpearl Landmark 81', 'Khách sạn cao nhất Việt Nam với view toàn thành phố.', '720A Điện Biên Phủ, Vinhomes Tân Cảng, Quận Bình Thạnh', 'Hồ Chí Minh', 5.0),
-(2, 'The Reverie Saigon', 'Tuyệt tác nghỉ dưỡng xa hoa bật nhất Sài Gòn mang phong cách hoàng gia Ý.', '22-36 Nguyễn Huệ, Quận 1', 'Hồ Chí Minh', 5.0),
-(3, 'Caravelle Saigon', 'Khách sạn 5 sao mang tính biểu tượng nằm ngay trung tâm thành phố Sài Gòn.', '19 Công Trường Lam Sơn, Quận 1', 'Hồ Chí Minh', 4.8),
-(4, 'New World Saigon Hotel', 'Nằm ở khu vực nhộn nhịp của Quận 1 với đầy đủ tiện nghi.', '76 Lê Lai, Quận 1', 'Hồ Chí Minh', 4.6),
-(5, 'Rex Hotel Saigon', 'Một trong những khách sạn lâu đời và danh tiếng nhất Sài Gòn.', '141 Nguyễn Huệ, Quận 1', 'Hồ Chí Minh', 4.5),
+(1, 'Vinpearl Landmark 81', 'Khách sạn cao nhất Việt Nam với view toàn thành phố.', '720A Điện Biên Phủ, Vinhomes Tân Cảng, Quận Bình Thạnh', 'Hồ Chí Minh', 5.0, 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800'),
+(2, 'The Reverie Saigon', 'Tuyệt tác nghỉ dưỡng xa hoa bật nhất Sài Gòn mang phong cách hoàng gia Ý.', '22-36 Nguyễn Huệ, Quận 1', 'Hồ Chí Minh', 5.0, 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800'),
+(3, 'Caravelle Saigon', 'Khách sạn 5 sao mang tính biểu tượng nằm ngay trung tâm thành phố Sài Gòn.', '19 Công Trường Lam Sơn, Quận 1', 'Hồ Chí Minh', 4.8, 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800'),
+(4, 'New World Saigon Hotel', 'Nằm ở khu vực nhộn nhịp của Quận 1 với đầy đủ tiện nghi.', '76 Lê Lai, Quận 1', 'Hồ Chí Minh', 4.6, 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800'),
+(5, 'Rex Hotel Saigon', 'Một trong những khách sạn lâu đời và danh tiếng nhất Sài Gòn.', '141 Nguyễn Huệ, Quận 1', 'Hồ Chí Minh', 4.5, 'https://images.unsplash.com/photo-1551882547-ff43c63faf76?w=800'),
 
 -- HN
-(6, 'InterContinental Hanoi Westlake', 'Khách sạn sang trọng nằm hoàn toàn trên mặt hồ Tây.', '5 Từ Hoa, Tây Hồ', 'Hà Nội', 4.9),
-(7, 'Sofitel Legend Metropole', 'Một ốc đảo lịch sử giữa trung tâm thành phố với nét quyến rũ cổ điển.', '15 Ngô Quyền, Hoàn Kiếm', 'Hà Nội', 5.0),
-(8, 'Lotte Hotel Hanoi', 'Nằm ở phần trên của tòa nhà 65 tầng hoành tráng, tầm nhìn không hạn chế.', '54 Liễu Giai, Ba Đình', 'Hà Nội', 4.7),
-(9, 'JW Marriott Hotel Hanoi', 'Tòa nhà có kiến trúc hình con rồng uốn lượn cạnh trung tâm hội nghị quốc gia.', '8 Đỗ Đức Dục, Nam Từ Liêm', 'Hà Nội', 4.9),
-(10, 'Pan Pacific Hanoi', 'Tầm nhìn tuyệt đẹp bao quát cả Hồ Tây và Hồ Trúc Bạch.', '1 Thanh Niên, Ba Đình', 'Hà Nội', 4.6),
+(6, 'InterContinental Hanoi Westlake', 'Khách sạn sang trọng nằm hoàn toàn trên mặt hồ Tây.', '5 Từ Hoa, Tây Hồ', 'Hà Nội', 4.9, 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800'),
+(7, 'Sofitel Legend Metropole', 'Một ốc đảo lịch sử giữa trung tâm thành phố với nét quyến rũ cổ điển.', '15 Ngô Quyền, Hoàn Kiếm', 'Hà Nội', 5.0, 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800'),
+(8, 'Lotte Hotel Hanoi', 'Nằm ở phần trên của tòa nhà 65 tầng hoành tráng, tầm nhìn không hạn chế.', '54 Liễu Giai, Ba Đình', 'Hà Nội', 4.7, 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800'),
+(9, 'JW Marriott Hotel Hanoi', 'Tòa nhà có kiến trúc hình con rồng uốn lượn cạnh trung tâm hội nghị quốc gia.', '8 Đỗ Đức Dục, Nam Từ Liêm', 'Hà Nội', 4.9, 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800'),
+(10, 'Pan Pacific Hanoi', 'Tầm nhìn tuyệt đẹp bao quát cả Hồ Tây và Hồ Trúc Bạch.', '1 Thanh Niên, Ba Đình', 'Hà Nội', 4.6, 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'),
 
 -- DN
-(11, 'Melia Danang Beach Resort', 'Khu nghỉ dưỡng lý tưởng với bãi biển cát trắng riêng biệt.', '19 Trường Sa, Ngũ Hành Sơn', 'Đà Nẵng', 4.5),
-(12, 'Furama Resort Danang', 'Khu nghỉ dưỡng di sản bên bãi biển tuyệt đẹp tại Miền Trung Việt Nam.', '103 - 105 Võ Nguyên Giáp, Khuê Mỹ, Ngũ Hành Sơn', 'Đà Nẵng', 4.8),
-(13, 'InterContinental Danang Sun Peninsula', 'Khu nghỉ dưỡng sang trọng bậc nhất trên bán đảo Sơn Trà do Bill Bensley thiết kế.', 'Bãi Bắc, Bán đảo Sơn Trà', 'Đà Nẵng', 5.0),
-(14, 'Naman Retreat', 'Khu nghỉ dưỡng 5 sao giao thoa giữa văn hóa cổ truyền và kiến trúc đương đại.', 'Đường Trường Sa, Ngũ Hành Sơn', 'Đà Nẵng', 4.7),
-(15, 'Novotel Danang Premier Han River', 'Vị trí đắc địa cạnh sông Hàn với Sky36 bar trên đỉnh.', '36 Bạch Đằng, Hải Châu', 'Đà Nẵng', 4.6),
+(11, 'Melia Danang Beach Resort', 'Khu nghỉ dưỡng lý tưởng với bãi biển cát trắng riêng biệt.', '19 Trường Sa, Ngũ Hành Sơn', 'Đà Nẵng', 4.5, 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800'),
+(12, 'Furama Resort Danang', 'Khu nghỉ dưỡng di sản bên bãi biển tuyệt đẹp tại Miền Trung Việt Nam.', '103 - 105 Võ Nguyên Giáp, Khuê Mỹ, Ngũ Hành Sơn', 'Đà Nẵng', 4.8, 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800'),
+(13, 'InterContinental Danang Sun Peninsula', 'Khu nghỉ dưỡng sang trọng bậc nhất trên bán đảo Sơn Trà do Bill Bensley thiết kế.', 'Bãi Bắc, Bán đảo Sơn Trà', 'Đà Nẵng', 5.0, 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800'),
+(14, 'Naman Retreat', 'Khu nghỉ dưỡng 5 sao giao thoa giữa văn hóa cổ truyền và kiến trúc đương đại.', 'Đường Trường Sa, Ngũ Hành Sơn', 'Đà Nẵng', 4.7, 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800'),
+(15, 'Novotel Danang Premier Han River', 'Vị trí đắc địa cạnh sông Hàn với Sky36 bar trên đỉnh.', '36 Bạch Đằng, Hải Châu', 'Đà Nẵng', 4.6, 'https://images.unsplash.com/photo-1551882547-ff43c63faf76?w=800'),
 
 -- PQ
-(16, 'Pullman Phu Quoc Beach Resort', 'Trung tâm giải trí nghỉ dưỡng hàng đầu tại Đảo Ngọc.', 'Tổ 6 xóm Bàn Quy, Bãi Trường, Dương Tơ', 'Phú Quốc', 4.8),
-(17, 'JW Marriott Phu Quoc Emerald Bay', 'Trường Đại học giả tưởng do Bill Bensley thiết kế ở bãi Kem.', 'Bãi Khem, An Thới', 'Phú Quốc', 5.0),
-(18, 'Vinpearl Resort & Spa Phu Quoc', 'Trải nghiệm nghỉ dưỡng All-in-one hoàn hảo, phù hợp cho mọi gia đình.', 'Bãi Dài, Gành Dầu', 'Phú Quốc', 4.6),
-(19, 'InterContinental Phu Quoc Long Beach Resort', 'Biểu tượng của sự sang trọng bên bãi Trường hoang sơ.', 'Bãi Trường, Dương Tơ', 'Phú Quốc', 4.9),
+(16, 'Pullman Phu Quoc Beach Resort', 'Trung tâm giải trí nghỉ dưỡng hàng đầu tại Đảo Ngọc.', 'Tổ 6 xóm Bàn Quy, Bãi Trường, Dương Tơ', 'Phú Quốc', 4.8, 'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=800'),
+(17, 'JW Marriott Phu Quoc Emerald Bay', 'Trường Đại học giả tưởng do Bill Bensley thiết kế ở bãi Kem.', 'Bãi Khem, An Thới', 'Phú Quốc', 5.0, 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800'),
+(18, 'Vinpearl Resort & Spa Phu Quoc', 'Trải nghiệm nghỉ dưỡng All-in-one hoàn hảo, phù hợp cho mọi gia đình.', 'Bãi Dài, Gành Dầu', 'Phú Quốc', 4.6, 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800'),
+(19, 'InterContinental Phu Quoc Long Beach Resort', 'Biểu tượng của sự sang trọng bên bãi Trường hoang sơ.', 'Bãi Trường, Dương Tơ', 'Phú Quốc', 4.9, 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800'),
 
 -- NT
-(20, 'Amiana Resort', 'Nơi hội tụ vẻ đẹp thiên nhiên với hồ bơi nước mặn khổng lồ.', 'Phạm Văn Đồng, Vĩnh Hòa', 'Nha Trang', 4.6),
-(21, 'Vinpearl Resort Nha Trang', 'Điểm đến hoàn hảo của sự sang trọng, đẳng cấp và lãng mạn.', 'Đảo Hòn Tre', 'Nha Trang', 4.8),
-(22, 'InterContinental Nha Trang', 'Mang đến trải nghiệm nghỉ dưỡng 5 sao ven biển Trần Phú.', '32-34 Trần Phú', 'Nha Trang', 4.7),
+(20, 'Amiana Resort', 'Nơi hội tụ vẻ đẹp thiên nhiên với hồ bơi nước mặn khổng lồ.', 'Phạm Văn Đồng, Vĩnh Hòa', 'Nha Trang', 4.6, 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800'),
+(21, 'Vinpearl Resort Nha Trang', 'Điểm đến hoàn hảo của sự sang trọng, đẳng cấp và lãng mạn.', 'Đảo Hòn Tre', 'Nha Trang', 4.8, 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800'),
+(22, 'InterContinental Nha Trang', 'Mang đến trải nghiệm nghỉ dưỡng 5 sao ven biển Trần Phú.', '32-34 Trần Phú', 'Nha Trang', 4.7, 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800'),
 
 -- DL
-(23, 'Ana Mandara Villas Dalat', 'Khu nghỉ dưỡng mang đậm nét cổ kính thời Pháp thuộc với các biệt thự ẩn trong rừng thông.', 'Đường Lê Lai, Phường 5', 'Đà Lạt', 4.7),
-(24, 'Dalat Palace Heritage Hotel', 'Khách sạn lâu đời nhất mang chuẩn mực thượng lưu châu Âu.', '2 Trần Phú, Phường 3', 'Đà Lạt', 4.8),
-(25, 'Swiss-Belresort Tuyen Lam', 'Bao quanh bởi sân Golf 18 lỗ và rừng thông lãng mạn.', 'Khu du lịch Hồ Tuyền Lâm, Phường 3', 'Đà Lạt', 4.5),
+(23, 'Ana Mandara Villas Dalat', 'Khu nghỉ dưỡng mang đậm nét cổ kính thời Pháp thuộc với các biệt thự ẩn trong rừng thông.', 'Đường Lê Lai, Phường 5', 'Đà Lạt', 4.7, 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800'),
+(24, 'Dalat Palace Heritage Hotel', 'Khách sạn lâu đời nhất mang chuẩn mực thượng lưu châu Âu.', '2 Trần Phú, Phường 3', 'Đà Lạt', 4.8, 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800'),
+(25, 'Swiss-Belresort Tuyen Lam', 'Bao quanh bởi sân Golf 18 lỗ và rừng thông lãng mạn.', 'Khu du lịch Hồ Tuyền Lâm, Phường 3', 'Đà Lạt', 4.5, 'https://images.unsplash.com/photo-1551882547-ff43c63faf76?w=800'),
 
 -- Sapa / Hoi An / Ha Long
-(26, 'Hotel de la Coupole Sapa - MGallery', 'Sự pha trộn giữa Haute Couture thời trang và sắc màu dân tộc Tây Bắc.', '1 Hoàng Liên', 'Sa Pa', 4.9),
-(27, 'Four Seasons Resort The Nam Hai', 'Biệt thự nghỉ dưỡng riêng tư tuyệt đối bên bờ biển Cửa Đại đẹp hoang sơ.', 'Block Ha My Dong B, Điện Bàn', 'Hội An', 5.0),
-(28, 'Wyndham Legend Halong', 'Khách sạn đạt tiêu chuẩn 5 sao quốc tế đầu tiên tại khu du lịch Bãi Cháy.', '12 Hạ Long, Bãi Cháy', 'Hạ Long', 4.7),
-(29, 'Vinpearl Resort & Spa Ha Long', 'Đảo nghỉ dưỡng tráng lệ 100% hướng nhìn ra vịnh kỳ quan.', 'Đảo Rều, Bãi Cháy', 'Hạ Long', 4.8),
-(30, 'Silk Sense Hoi An River Resort', 'Khu nghỉ dưỡng sinh thái nằm tĩnh lặng bên dòng sông Cổ Cò thơ mộng.', 'Khu Tân Thịnh, Cẩm An', 'Hội An', 4.6);
+(26, 'Hotel de la Coupole Sapa - MGallery', 'Sự pha trộn giữa Haute Couture thời trang và sắc màu dân tộc Tây Bắc.', '1 Hoàng Liên', 'Sa Pa', 4.9, 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800'),
+(27, 'Four Seasons Resort The Nam Hai', 'Biệt thự nghỉ dưỡng riêng tư tuyệt đối bên bờ biển Cửa Đại đẹp hoang sơ.', 'Block Ha My Dong B, Điện Bàn', 'Hội An', 5.0, 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=800'),
+(28, 'Wyndham Legend Halong', 'Khách sạn đạt tiêu chuẩn 5 sao quốc tế đầu tiên tại khu du lịch Bãi Cháy.', '12 Hạ Long, Bãi Cháy', 'Hạ Long', 4.7, 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800'),
+(29, 'Vinpearl Resort & Spa Ha Long', 'Đảo nghỉ dưỡng tráng lệ 100% hướng nhìn ra vịnh kỳ quan.', 'Đảo Rều, Bãi Cháy', 'Hạ Long', 4.8, 'https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800'),
+(30, 'Silk Sense Hoi An River Resort', 'Khu nghỉ dưỡng sinh thái nằm tĩnh lặng bên dòng sông Cổ Cò thơ mộng.', 'Khu Tân Thịnh, Cẩm An', 'Hội An', 4.6, 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800');
 
 
 -- ==========================================

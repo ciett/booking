@@ -35,9 +35,16 @@ const Home = () => {
 
     // Hàm điều hướng khi bấm nút Tìm kiếm
     const handleSearch = (e) => {
-        e.preventDefault(); // CHẶN reload trang
-        // Chuyển sang trang kết quả
-        navigate('/search-results');
+        e.preventDefault();
+        const params = new URLSearchParams({
+            city: destination,
+            checkIn: dates ? dates[0].format('YYYY-MM-DD') : '',
+            checkOut: dates ? dates[1].format('YYYY-MM-DD') : '',
+            adults: options.adult,
+            children: options.children,
+            rooms: options.room
+        });
+        navigate(`/search-results?${params.toString()}`);
     };
 
     // Nội dung bên trong ô chọn số người (Popover content)

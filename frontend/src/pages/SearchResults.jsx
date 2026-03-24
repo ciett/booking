@@ -1,14 +1,54 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 import FilterSidebar from '../components/FilterSidebar';
 import HotelCard from '../components/HotelCard';
 
 const SearchResults = () => {
-    // Dữ liệu mẫu (sau này bạn sẽ gọi từ API)
-    const dummyHotels = [
-        { id: 1, name: "Golden Suites Saigon", rating: "8.5", reviews: 410, price: "1.250.000", location: "Quận 7, TP. HCM", image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500", desc: "Tọa lạc tại vị trí thuận tiện, chỗ nghỉ này cung cấp phòng ốc hiện đại với tầm nhìn ra thành phố..." },
-        { id: 2, name: "The Reverie Saigon", rating: "9.4", reviews: 1250, price: "8.900.000", location: "Quận 1, TP. HCM", image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=500", desc: "Trải nghiệm đẳng cấp 5 sao ngay tại trung tâm Sài Gòn với phong cách thiết kế sang trọng..." },
-        { id: 3, name: "Cozrum Homes - Amber House", rating: "8.1", reviews: 215, price: "650.000", location: "Quận 3, TP. HCM", image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=500", desc: "Không gian ấm cúng, phù hợp cho những chuyến du lịch tiết kiệm nhưng vẫn đầy đủ tiện nghi..." }
-    ];
+    const [searchParams] = useSearchParams();
+    const [hotels, setHotels] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const city = searchParams.get('city') || '';
+    const checkIn = searchParams.get('checkIn') || '';
+    const checkOut = searchParams.get('checkOut') || '';
+
+    useEffect(() => {
+        const fetchHotels = async () => {
+            setLoading(true);
+            try {
+                const response = await axios.get('/api/hotels/search', {
+                    params: { city, checkIn, checkOut }
+                });
+                
+                // Map backend data to frontend format
+                const mappedHotels = response.data.map(h => ({
+                    id: h.id,
+                    name: h.name,
+                    rating: h.rating || "0.0",
+                    reviews: h.reviewCount || 0,
+                    price: h.price ? h.price.toLocaleString('vi-VN') : "Liên hệ",
+                    location: h.address || h.city,
+                    image: h.imageUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500",
+                    desc: h.description || "Không có mô tả cho khách sạn này."
+                }));
+                
+                setHotels(mappedHotels);
+            } catch (err) {
+                console.error("Error fetching hotels:", err);
+                setError("Không thể tải danh sách khách sạn. Vui lòng thử lại.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (city) {
+            fetchHotels();
+        } else {
+            setLoading(false);
+        }
+    }, [city, checkIn, checkOut]);
 
     return (
         <div className="bg-white min-h-screen pb-10">
@@ -25,7 +65,9 @@ const SearchResults = () => {
 
                 {/* CỘT PHẢI */}
                 <main className="flex-1">
-                    <h1 className="text-2xl font-bold text-gray-900 mb-2">TP. Hồ Chí Minh: tìm thấy {dummyHotels.length} chỗ nghỉ</h1>
+                    <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                        {city}: {loading ? "Đang tìm..." : `tìm thấy ${hotels.length} chỗ nghỉ`}
+                    </h1>
                     
                     {/* Thanh Tab sắp xếp nhanh */}
                     <div className="flex overflow-x-auto border-b border-gray-200 mb-6">
@@ -36,9 +78,17 @@ const SearchResults = () => {
 
                     {/* Danh sách thẻ khách sạn */}
                     <div className="space-y-4">
-                        {dummyHotels.map(hotel => (
-                            <HotelCard key={hotel.id} hotel={hotel} />
-                        ))}
+                        {loading ? (
+                            <div className="text-center py-20 text-gray-500">Đang tải dữ liệu...</div>
+                        ) : error ? (
+                            <div className="text-center py-20 text-red-500">{error}</div>
+                        ) : hotels.length === 0 ? (
+                            <div className="text-center py-20 text-gray-500">Không tìm thấy chỗ nghỉ nào tại {city}.</div>
+                        ) : (
+                            hotels.map(hotel => (
+                                <HotelCard key={hotel.id} hotel={hotel} />
+                            ))
+                        )}
                     </div>
                 </main>
             </div>
