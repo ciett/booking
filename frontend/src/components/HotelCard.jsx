@@ -1,4 +1,5 @@
 import React from 'react';
+import DetailOverlay from './DetailOverlay';
 
 const HotelCard = ({ hotel }) => {
     return (
@@ -46,9 +47,50 @@ const HotelCard = ({ hotel }) => {
                     <p className="text-[11px] text-gray-500">1 đêm, 2 người lớn</p>
                     <p className="text-2xl font-bold text-gray-900">VND {hotel.price}</p>
                     <p className="text-[10px] text-gray-500 mb-2">Đã bao gồm thuế và phí</p>
-                    <button className="bg-[#006ce4] text-white px-6 py-2.5 rounded-md font-bold hover:bg-[#003b95] transition flex items-center gap-2">
-                        Xem chỗ trống <i className="fa-solid fa-chevron-right text-xs"></i>
-                    </button>
+                    <DetailOverlay 
+                        trigger={
+                            <button className="bg-[#006ce4] text-white px-6 py-2.5 rounded-md font-bold hover:bg-[#003b95] transition flex items-center gap-2">
+                                Xem chỗ trống <i className="fa-solid fa-chevron-right text-xs"></i>
+                            </button>
+                        }
+                        title={hotel.name}
+                        description={hotel.location}
+                        content={
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                    <div className="bg-[#003580] text-white px-2 py-1 rounded-sm font-bold">{hotel.rating}</div>
+                                    <span className="font-bold">Tuyệt vời • {hotel.reviews} đánh giá</span>
+                                </div>
+                                <div className="rounded-lg overflow-hidden h-48">
+                                    <img src={hotel.image} className="w-full h-full object-cover" alt="hotel detail" />
+                                </div>
+                                <div className="prose prose-sm text-gray-600">
+                                    <p className="font-semibold text-gray-900 mb-1">Mô tả chỗ nghỉ:</p>
+                                    <p>{hotel.desc}</p>
+                                </div>
+                                <div className="grid grid-cols-2 gap-2 text-xs font-medium">
+                                    <div className="flex items-center gap-2 text-green-700 bg-green-50 p-2 rounded">
+                                        <i className="fa-solid fa-check"></i> Miễn phí hủy bỏ
+                                    </div>
+                                    <div className="flex items-center gap-2 text-green-700 bg-green-50 p-2 rounded">
+                                        <i className="fa-solid fa-check"></i> Không cần thanh toán trước
+                                    </div>
+                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50 p-2 rounded">
+                                        <i className="fa-solid fa-wifi"></i> Wifi miễn phí
+                                    </div>
+                                    <div className="flex items-center gap-2 text-blue-700 bg-blue-50 p-2 rounded">
+                                        <i className="fa-solid fa-parking"></i> Có bãi đỗ xe
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        footer={
+                            <div className="flex flex-col items-end">
+                                <p className="text-xl font-bold text-gray-900 mb-1">VND {hotel.price}</p>
+                                <button className="bg-[#006ce4] text-white px-8 py-2 rounded-md font-bold">Đặt ngay</button>
+                            </div>
+                        }
+                    />
                 </div>
             </div>
         </div>

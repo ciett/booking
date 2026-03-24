@@ -54,16 +54,16 @@ const Attractions = () => {
             <div className="w-full flex flex-col items-center bg-gray-50 min-h-screen text-black">
 
                 {/* Banner */}
-                <div className="w-full bg-[#003b95] text-white py-16 px-4">
-                    <div className="max-w-6xl mx-auto">
+                <div className="search-banner">
+                    <div className="section-container">
                         <h1 className="text-4xl font-bold mb-3">Địa điểm tham quan, hoạt động và trải nghiệm</h1>
                         <p className="text-xl opacity-90">Khám phá những điều tuyệt vời nhất tại điểm đến của bạn</p>
                     </div>
                 </div>
 
         {/* Search Bar */}
-        <div className="max-w-6xl w-full -mt-10 px-4">
-          <div className="bg-white p-6 rounded-xl shadow-2xl border border-gray-100 grid grid-cols-1 md:grid-cols-12 gap-3">
+        <div className="search-box-container">
+          <div className="search-box grid grid-cols-1 md:grid-cols-12 gap-3">
             {/* Địa điểm */}
             <div className="md:col-span-5 border rounded-lg p-2 flex items-center gap-2 bg-white">
               <i className="fa-solid fa-location-dot text-gray-400 ml-2"></i>
@@ -122,7 +122,7 @@ const Attractions = () => {
         </div>
 
                 {/* Danh sách địa điểm */}
-                <div className="max-w-6xl w-full mt-16 px-4 mb-20">
+                <div className="section-container mt-16 mb-20">
                     <h2 className="text-2xl font-bold mb-6 text-gray-800">Các điểm tham quan nổi bật tại Việt Nam</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
@@ -186,7 +186,7 @@ const Attractions = () => {
                     </div>
                 </div>
 
-                <div className="max-w-6xl w-full text-center pb-20">
+                <div className="section-container text-center pb-20">
                     <p className="text-gray-400 italic">Chọn một điểm đến để khám phá các hoạt động thú vị.</p>
                 </div>
             </div>

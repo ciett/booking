@@ -13,13 +13,13 @@ const SearchResults = () => {
     return (
         <div className="bg-white min-h-screen pb-10">
             {/* Breadcrumbs nhỏ */}
-            <div className="max-w-6xl mx-auto px-4 py-3 text-[11px] text-[#006ce4] flex items-center gap-2">
+            <div className="section-container py-3 text-[11px] text-[#006ce4] flex items-center gap-2">
                 <span>Trang chủ</span> <i className="fa-solid fa-chevron-right text-[8px] text-gray-400"></i>
                 <span>Việt Nam</span> <i className="fa-solid fa-chevron-right text-[8px] text-gray-400"></i>
                 <span className="text-gray-500 font-medium italic">Kết quả tìm kiếm</span>
             </div>
 
-            <div className="max-w-6xl mx-auto px-4 flex flex-col md:flex-row gap-6">
+            <div className="section-container flex flex-col md:flex-row gap-6">
                 {/* CỘT TRÁI */}
                 <FilterSidebar />
 

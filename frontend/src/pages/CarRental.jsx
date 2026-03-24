@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import DetailOverlay from '../components/DetailOverlay';
 
 const { RangePicker } = DatePicker;
 
@@ -62,17 +63,17 @@ const CarRental = () => {
     <ConfigProvider theme={{ token: { colorPrimary: '#003b95' } }}>
       <div className="w-full flex flex-col items-center bg-gray-50 min-h-screen text-black">
 
-        {/* Banner - Dùng mã màu HEX trực tiếp để tránh lỗi Tailwind config */}
-        <div className="w-full bg-[#003b95] text-white py-16 px-4">
-          <div className="max-w-6xl mx-auto">
-            <h1 className="text-4xl font-bold mb-3 text-white">Thuê xe cho mọi loại hành trình</h1>
-            <p className="text-xl opacity-90 text-white">Ưu đãi lớn từ các thương hiệu hàng đầu thế giới</p>
+        {/* Banner */}
+        <div className="search-banner">
+          <div className="section-container">
+            <h1 className="text-4xl font-bold mb-3">Thuê xe cho mọi loại hành trình</h1>
+            <p className="text-xl opacity-90">Ưu đãi cực lớn từ các thương hiệu hàng đầu thế giới</p>
           </div>
         </div>
 
         {/* Search Bar */}
-        <div className="max-w-6xl w-full -mt-10 px-4">
-          <div className="bg-white p-6 rounded-xl shadow-2xl border border-gray-100 flex flex-col gap-4">
+        <div className="search-box-container">
+          <div className="search-box">
 
             <div className="mb-2">
               <Checkbox
@@ -107,7 +108,14 @@ const CarRental = () => {
                   <LocationOnIcon className="text-red-500" />
                   <div className="flex flex-col w-full">
                     <span className="text-[10px] font-bold text-gray-500 uppercase">Địa điểm trả xe</span>
-                    <Select placeholder="Địa điểm trả..." variant="borderless" className="w-full" />
+                    <Select 
+                      showSearch
+                      placeholder="Địa điểm trả..." 
+                      variant="borderless" 
+                      className="w-full" 
+                      filterOption={(input, option) => (option?.value ?? '').toLowerCase().includes(input.toLowerCase())}
+                      options={locations.map(city => ({ value: city, label: city }))}
+                    />
                   </div>
                 </div>
               )}
@@ -149,11 +157,11 @@ const CarRental = () => {
 
         {/* Search Results */}
         {results.length > 0 && (
-          <div className="max-w-6xl w-full mt-8 px-4 text-black">
-            <h2 className="text-2xl font-bold mb-4">Kết quả tìm kiếm</h2>
+          <div className="section-container mt-8">
+            <h2 className="text-2xl font-bold mb-6">Kết quả tìm kiếm xe tốt nhất</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {results.map((car) => (
-                <div key={car.id} className="bg-white p-4 rounded-lg shadow border border-gray-200 flex flex-col justify-between">
+                <div key={car.id} className="result-card flex flex-col justify-between">
                   <div>
                     <h3 className="font-bold text-xl text-booking-blue mb-1">{car.companyName}</h3>
                     <p className="text-lg font-semibold">{car.carModel}</p>
@@ -164,7 +172,49 @@ const CarRental = () => {
                   </div>
                   <div className="flex justify-between items-end mt-4">
                     <span className="text-xl font-bold text-red-600">{car.pricePerDay.toLocaleString('vi-VN')} đ <span className="text-sm text-gray-500 font-normal">/ ngày</span></span>
-                    <Button variant="contained" sx={{ backgroundColor: '#006ce4', fontWeight: 'bold' }}>Thuê ngay</Button>
+                    <DetailOverlay 
+                      trigger={<Button variant="contained" sx={{ backgroundColor: '#006ce4', fontWeight: 'bold' }}>Thuê ngay</Button>}
+                      title={`Chi tiết xe ${car.carModel}`}
+                      description={`Cung cấp bởi đối tác ${car.companyName}`}
+                      content={
+                        <div className="space-y-4">
+                          <div className="bg-gray-100 p-4 rounded-lg flex items-center justify-between">
+                            <div>
+                              <p className="text-sm text-gray-500">Mẫu xe</p>
+                              <p className="text-lg font-bold">{car.carModel}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-gray-500">Số chỗ</p>
+                              <p className="text-lg font-bold">{car.seats} chỗ</p>
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="border p-2 rounded">
+                              <p className="font-semibold"><i className="fa-solid fa-gas-pump mr-2 text-blue-500"></i> Nhiên liệu</p>
+                              <p className="text-gray-600">Xăng / Full-to-Full</p>
+                            </div>
+                            <div className="border p-2 rounded">
+                              <p className="font-semibold"><i className="fa-solid fa-gear mr-2 text-blue-500"></i> Hộp số</p>
+                              <p className="text-gray-600">Tự động</p>
+                            </div>
+                            <div className="border p-2 rounded">
+                              <p className="font-semibold"><i className="fa-solid fa-snowflake mr-2 text-blue-500"></i> Điều hòa</p>
+                              <p className="text-gray-600">Có sẵn</p>
+                            </div>
+                            <div className="border p-2 rounded">
+                              <p className="font-semibold"><i className="fa-solid fa-suitcase mr-2 text-blue-500"></i> Hành lý</p>
+                              <p className="text-gray-600">2 Vali lớn, 1 Vali nhỏ</p>
+                            </div>
+                          </div>
+                          <div className="bg-yellow-50 p-3 rounded border border-yellow-100 italic text-xs">
+                            * Lưu ý: Người lái cần mang theo bằng lái xe hợp lệ và căn cước công dân khi nhận xe.
+                          </div>
+                        </div>
+                      }
+                      footer={
+                        <Button variant="contained" sx={{ backgroundColor: '#006ce4' }}>Tiếp tục đặt xe</Button>
+                      }
+                    />
                   </div>
                 </div>
               ))}
@@ -172,24 +222,26 @@ const CarRental = () => {
           </div>
         )}
 
-        {/* Info Blocks */}
-        <div className="max-w-6xl w-full mt-20 px-4 grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 text-black">
-          <div className="flex flex-col items-center text-center p-4">
-            <span className="text-4xl mb-2">✔️</span>
-            <h3 className="font-bold text-lg">Hủy miễn phí</h3>
-            <p className="text-gray-500 text-sm">Hầu hết các đơn đặt xe đều có thể hủy trước 48 giờ</p>
+        {/* Info Blocks - Ẩn đi khi có kết quả tìm kiếm */}
+        {results.length === 0 && (
+          <div className="section-container mt-20 grid grid-cols-1 md:grid-cols-3 gap-8 mb-20 text-black">
+            <div className="flex flex-col items-center text-center p-4">
+              <span className="text-4xl mb-2">✔️</span>
+              <h3 className="font-bold text-lg">Hủy miễn phí</h3>
+              <p className="text-gray-500 text-sm">Hầu hết các đơn đặt xe đều có thể hủy trước 48 giờ</p>
+            </div>
+            <div className="flex flex-col items-center text-center p-4">
+              <span className="text-4xl mb-2">🏢</span>
+              <h3 className="font-bold text-lg">Hơn 900 công ty</h3>
+              <p className="text-gray-500 text-sm">Kết nối với các đối tác uy tín như Hertz, Avis, Europcar</p>
+            </div>
+            <div className="flex flex-col items-center text-center p-4">
+              <span className="text-4xl mb-2">✨</span>
+              <h3 className="font-bold text-lg">Không phí ẩn</h3>
+              <p className="text-gray-500 text-sm">Giá hiển thị là giá cuối cùng bạn phải trả</p>
+            </div>
           </div>
-          <div className="flex flex-col items-center text-center p-4">
-            <span className="text-4xl mb-2">🏢</span>
-            <h3 className="font-bold text-lg">Hơn 900 công ty</h3>
-            <p className="text-gray-500 text-sm">Kết nối với các đối tác uy tín như Hertz, Avis, Europcar</p>
-          </div>
-          <div className="flex flex-col items-center text-center p-4">
-            <span className="text-4xl mb-2">✨</span>
-            <h3 className="font-bold text-lg">Không phí ẩn</h3>
-            <p className="text-gray-500 text-sm">Giá hiển thị là giá cuối cùng bạn phải trả</p>
-          </div>
-        </div>
+        )}
       </div>
     </ConfigProvider>
   );

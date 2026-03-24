@@ -36,7 +36,7 @@ const Navbar = () => {
 
     return (
         <header className="bg-booking-blue text-white">
-            <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="section-container py-4 flex items-center justify-between">
                 {/* Logo */}
                 <Link to="/" className="text-2xl font-bold tracking-tight">Booking.com</Link>
 
@@ -89,7 +89,7 @@ const Navbar = () => {
             </div>
 
             {/* Sub Navbar (Menu điều hướng chính) */}
-            <div className="max-w-6xl mx-auto px-4 pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <div className="section-container pb-4 overflow-x-auto whitespace-nowrap scrollbar-hide">
                 <div className="flex space-x-2">
                     {navItems.map((item) => {
                         const isActive = location.pathname === item.path ||

@@ -61,17 +61,16 @@ const Home = () => {
     return (
         <main className="grow">
             {/* Hero Section */}
-            <div className="bg-[#003b95] text-white">
-                <div className="max-w-6xl mx-auto px-4 pt-12 pb-20">
+            <div className="search-banner">
+                <div className="section-container pt-12 pb-20">
                     <h1 className="text-5xl font-extrabold mb-4">Tìm chỗ nghỉ tiếp theo</h1>
                     <p className="text-2xl">Tìm ưu đãi khách sạn, chỗ nghỉ dạng nhà ở và nhiều hơn nữa...</p>
                 </div>
             </div>
 
             {/* Search Box */}
-            <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-10">
+            <div className="search-box-container relative z-10">
                 <div className="bg-[#ffb700] p-1 rounded-lg shadow-lg">
-                    {/* Bỏ thẻ <form> hoặc thêm onSubmit để tránh reload trang */}
                     <div className="flex flex-col md:flex-row bg-white rounded-md overflow-hidden">
 
                         {/* Điểm đến */}
@@ -103,7 +102,7 @@ const Home = () => {
                             </ConfigProvider>
                         </div>
 
-                        {/* Khách/Phòng - ĐÃ THÊM POPOVER ĐỂ CHỌN SỐ NGƯỜI */}
+                        {/* Khách/Phòng */}
                         <Popover content={content} title="Số lượng" trigger="click" placement="bottom">
                             <div className="flex-1 flex items-center p-3 border-b md:border-b-0 md:border-r border-yellow-400 cursor-pointer hover:bg-gray-50">
                                 <i className="fa-regular fa-user text-gray-400 mr-3 text-xl"></i>
@@ -113,7 +112,7 @@ const Home = () => {
                             </div>
                         </Popover>
 
-                        {/* Nút Tìm kiếm - ĐÃ GẮN handleSearch */}
+                        {/* Nút Tìm kiếm */}
                         <button 
                             type="button" 
                             onClick={handleSearch}
@@ -126,24 +125,24 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Điểm đến thịnh hành (để test click nhanh) */}
-            <div className="max-w-6xl mx-auto px-4 py-12">
+            {/* Điểm đến thịnh hành */}
+            <div className="section-container py-12">
                 <h2 className="text-2xl font-bold mb-4">Điểm đến thịnh hành</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div 
                         onClick={() => navigate('/search-results')}
-                        className="rounded-lg overflow-hidden relative h-64 cursor-pointer group"
+                        className="rounded-lg overflow-hidden relative h-64 cursor-pointer group shadow-md"
                     >
                         <img src="https://images.unsplash.com/photo-1583417311753-157d60548170?w=800" className="w-full h-full object-cover transition duration-300 group-hover:scale-105" alt="HCMC"/>
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10"></div>
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                         <h3 className="absolute bottom-4 left-4 text-white text-2xl font-bold">TP. Hồ Chí Minh</h3>
                     </div>
                     <div 
                         onClick={() => navigate('/search-results')}
-                        className="rounded-lg overflow-hidden relative h-64 cursor-pointer group"
+                        className="rounded-lg overflow-hidden relative h-64 cursor-pointer group shadow-md"
                     >
                         <img src="https://images.unsplash.com/photo-1629739572627-8adbc7d3ecae?w=800" className="w-full h-full object-cover transition duration-300 group-hover:scale-105" alt="Da Lat"/>
-                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10"></div>
+                        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
                         <h3 className="absolute bottom-4 left-4 text-white text-2xl font-bold">Đà Lạt</h3>
                     </div>
                 </div>
