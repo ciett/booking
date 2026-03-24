@@ -12,10 +12,10 @@ import Attractions from "./pages/Attractions";
 import AirportTaxis from "./pages/AirportTaxis";
 import ListProperty from './pages/ListProperty';
 import Careers from './pages/Careers';
-import SearchResults from './pages/SearchResults';
 import CustomerService from './pages/CustomerService';
 import BecomePartner from './pages/BecomePartner';
 import Business from './pages/Business';
+import Account from './pages/Account';
 
 function AppContent() {
   const location = useLocation();
@@ -45,10 +45,10 @@ function AppContent() {
           <Route path="/airport-taxis" element={<AirportTaxis />} />
           <Route path="/list-your-property" element={<ListProperty />} />
           <Route path="/careers" element={<Careers />} />
-          <Route path="/search-results" element={<SearchResults />} />
           <Route path="/customer-service" element={<CustomerService />} />
           <Route path="/become-partner" element={<BecomePartner />} />
           <Route path="/business" element={<Business />} />
+          <Route path="/account" element={<Account />} />
         </Routes>
       </main>
 

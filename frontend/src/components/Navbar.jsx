@@ -58,10 +58,10 @@ const Navbar = () => {
                     <div className="flex space-x-2 items-center">
                         {token ? (
                             <>
-                                <div className="flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors">
+                                <Link to="/account" className="flex items-center space-x-2 bg-white/10 px-3 py-2 rounded-full cursor-pointer hover:bg-white/20 transition-colors no-underline">
                                     <PersonIcon className="text-white" />
                                     <span className="text-white font-bold">{userName}</span>
-                                </div>
+                                </Link>
                                 <button 
                                     onClick={handleLogout}
                                     className="bg-white text-booking-blue px-4 py-2 rounded font-bold hover:bg-gray-100 transition-colors text-sm"
