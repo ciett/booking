@@ -27,14 +27,14 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable()) // Disable CSRF since we use JWT
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/hotels/**").permitAll()
-                        .requestMatchers("/api/room-types/**").permitAll()
-                        .requestMatchers("/api/flights/**").permitAll()
-                        .requestMatchers("/api/cars/**").permitAll()
-                        .requestMatchers("/api/attractions/**").permitAll()
-                        .requestMatchers("/api/airport-taxis/**").permitAll()
-                        .requestMatchers("/api/payment/**").permitAll() // Thêm cổng thanh toán
+                        .requestMatchers("/api/auth", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/hotels", "/api/hotels/**").permitAll()
+                        .requestMatchers("/api/room-types", "/api/room-types/**").permitAll()
+                        .requestMatchers("/api/flights", "/api/flights/**").permitAll()
+                        .requestMatchers("/api/cars", "/api/cars/**").permitAll()
+                        .requestMatchers("/api/attractions", "/api/attractions/**").permitAll()
+                        .requestMatchers("/api/airport-taxis", "/api/airport-taxis/**").permitAll()
+                        .requestMatchers("/api/payment", "/api/payment/**").permitAll() // Thêm cổng thanh toán
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/bookings/status/**").permitAll() // Cho phép polling status không cần token
                         .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll() // Mở khóa trang chủ
                         .requestMatchers("/error").permitAll()

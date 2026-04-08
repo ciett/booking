@@ -18,6 +18,7 @@ import BecomePartner from './pages/BecomePartner';
 import Business from './pages/Business';
 import Account from './pages/Account';
 import Checkout from './pages/Checkout';
+import PropertySubmission from './pages/PropertySubmission';
 
 function AppContent() {
   const location = useLocation();
@@ -53,6 +54,7 @@ function AppContent() {
           <Route path="/business" element={<Business />} />
           <Route path="/account" element={<Account />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/submit-property" element={<PropertySubmission />} />
         </Routes>
       </main>
 

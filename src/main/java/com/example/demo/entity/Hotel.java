@@ -16,7 +16,7 @@ public class Hotel {
     private String address;
     @Column(columnDefinition = "TEXT")
     private String description;
-    @Column(precision = 2, scale = 1)
+    @Column(precision = 3, scale = 1)
     private java.math.BigDecimal rating;
 
     @Column(name = "image_url")

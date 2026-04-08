@@ -26,7 +26,7 @@ const ListProperty = () => {
                         <p className="text-lg mb-6 text-gray-600">
                             Dù bạn có một căn hộ nhỏ hay cả một hệ thống khách sạn, hãy bắt đầu tiếp cận hàng triệu khách du lịch ngay hôm nay.
                         </p>
-                        <Link to="/register" className="block w-full">
+                        <Link to="/submit-property" className="block w-full">
                             <button className="w-full bg-booking-blue text-white py-4 rounded font-bold text-xl hover:bg-booking-dark transition shadow-lg">
                                 Bắt đầu ngay
                             </button>
@@ -100,9 +100,11 @@ const ListProperty = () => {
             {/* Footer kêu gọi */}
             <div className="py-20 text-center">
                 <h2 className="text-3xl font-bold mb-6">Sẵn sàng để tăng doanh thu của bạn?</h2>
-                <button className="bg-booking-blue text-white px-10 py-4 rounded font-bold text-xl hover:bg-booking-dark transition shadow-lg">
-                    Đăng chỗ nghỉ ngay
-                </button>
+                <Link to="/submit-property">
+                    <button className="bg-booking-blue text-white px-10 py-4 rounded font-bold text-xl hover:bg-booking-dark transition shadow-lg">
+                        Đăng chỗ nghỉ ngay
+                    </button>
+                </Link>
             </div>
         </div>
     );

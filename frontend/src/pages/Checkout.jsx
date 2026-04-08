@@ -71,6 +71,11 @@ const Checkout = () => {
       })
       .catch(err => {
         console.error("Không thể tự động điền thông tin người dùng", err);
+        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+          localStorage.removeItem('booking_token');
+          message.warning('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          navigate('/login', { state: { from: location } });
+        }
       });
   }, [navigate, location]);
 
@@ -186,25 +191,32 @@ const Checkout = () => {
 
       await api.post('/bookings', bookingPayload);
 
-      // Nếu là thanh toán ví điện tử, hiển thị Modal quét mã đặc chế
-      if (paymentMethod === 'ewallet') {
-          setShowQrModal(true);
-          return;
-      }
+      // 2. Gọi PayOS để lấy link thanh toán thật (Dành cho Bank Transfer và E-wallet dùng VietQR)
+      if (paymentMethod === 'bank' || paymentMethod === 'ewallet') {
+          const payosRes = await api.post('/payment/create-link', {
+              bookingCode: bookingCode,
+              amount: totalPrice
+          });
 
-      // 2. Gọi PayOS để lấy link thanh toán thật (Dành cho Bank Transfer)
-      const payosRes = await api.post('/payment/create-link', {
-          bookingCode: bookingCode,
-          amount: totalPrice
-      });
-
-      if (payosRes.data && payosRes.data.checkoutUrl) {
-          window.location.href = payosRes.data.checkoutUrl;
+          if (payosRes.data && payosRes.data.checkoutUrl) {
+              window.location.href = payosRes.data.checkoutUrl;
+          }
+      } else {
+          // Khi chọn COD...
+          setOrderStatus('completed');
       }
       
     } catch (err) {
-      console.error("Lỗi khi tạo giao dịch PayOS:", err);
-      message.error("Không thể kết nối với cổng thanh toán PayOS. Vui lòng thử lại sau.");
+      console.error("Lỗi khi tạo giao dịch:", err);
+      if (err.response && (err.response.status === 401 || err.response.status === 403)) {
+         message.error(t('checkout.sessionExpired', 'Phiên làm việc đã hết hạn. Hệ thống đang chuyển hướng về trang Đăng nhập...'));
+         localStorage.removeItem('booking_token');
+         setTimeout(() => {
+             navigate('/login', { state: { from: location } });
+         }, 1500);
+      } else {
+         message.error("Không thể kết nối với cổng thanh toán. Vui lòng thử lại sau.");
+      }
       setOrderStatus('idle');
     }
   };
@@ -370,30 +382,27 @@ const Checkout = () => {
                   </label>
 
                   {paymentMethod === 'ewallet' && (
-                    <div className="ml-9 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in-up">
-                      <p className="text-sm font-semibold text-gray-700 mb-3">{t('checkout.selectWallet', 'Chọn ví điện tử bạn muốn sử dụng')}</p>
-                      <div className="grid grid-cols-3 gap-3">
-                        <button 
-                          type="button" 
-                          onClick={() => setSelectedWallet('momo')}
-                          className={`border-2 p-3 rounded-xl text-center transition-all focus:outline-none ${selectedWallet === 'momo' ? 'border-pink-500 bg-pink-50 shadow-sm' : 'border-gray-200 hover:border-pink-300'}`}>
-                          <div className="text-2xl mb-1">💳</div>
+                    <div className="ml-9 p-5 bg-purple-50 rounded-xl border border-purple-200 animate-fade-in-up">
+                      <p className="text-sm font-semibold text-purple-800 mb-3">{t('checkout.ewalletInstruction', 'Thanh toán trực tiếp bằng ví điện tử qua mã PayOS/VietQR:')}</p>
+                      <div className="grid grid-cols-3 gap-3 mt-4">
+                        <button type="button" onClick={() => setSelectedWallet('momo')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'momo' ? 'border-pink-500 bg-pink-50 shadow-sm' : 'border-gray-200 hover:border-pink-300 bg-white'}`}>
+                          <div className="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center text-xl font-bold mb-2 shadow-sm">M</div>
                           <p className={`text-xs font-bold ${selectedWallet === 'momo' ? 'text-pink-600' : 'text-gray-700'}`}>MoMo</p>
                         </button>
-                        <button 
-                          type="button" 
-                          onClick={() => setSelectedWallet('zalopay')}
-                          className={`border-2 p-3 rounded-xl text-center transition-all focus:outline-none ${selectedWallet === 'zalopay' ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 hover:border-blue-300'}`}>
-                          <div className="text-2xl mb-1">💙</div>
+                        <button type="button" onClick={() => setSelectedWallet('zalopay')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'zalopay' ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 hover:border-blue-300 bg-white'}`}>
+                          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold mb-2 shadow-sm">Z</div>
                           <p className={`text-xs font-bold ${selectedWallet === 'zalopay' ? 'text-blue-600' : 'text-gray-700'}`}>ZaloPay</p>
                         </button>
-                        <button 
-                          type="button" 
-                          onClick={() => setSelectedWallet('vnpay')}
-                          className={`border-2 p-3 rounded-xl text-center transition-all focus:outline-none ${selectedWallet === 'vnpay' ? 'border-red-500 bg-red-50 shadow-sm' : 'border-gray-200 hover:border-red-300'}`}>
-                          <div className="text-2xl mb-1">🔴</div>
+                        <button type="button" onClick={() => setSelectedWallet('vnpay')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'vnpay' ? 'border-red-500 bg-red-50 shadow-sm' : 'border-gray-200 hover:border-red-300 bg-white'}`}>
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-red-600 to-blue-600 text-white flex items-center justify-center text-sm font-bold mb-2 shadow-sm">VN</div>
                           <p className={`text-xs font-bold ${selectedWallet === 'vnpay' ? 'text-red-600' : 'text-gray-700'}`}>VNPAY</p>
                         </button>
+                      </div>
+                      <div className="mt-4 flex items-start gap-2 bg-purple-100 p-3 rounded-lg">
+                        <i className="fa-solid fa-bolt text-purple-600 mt-0.5"></i>
+                        <p className="text-xs text-purple-800 leading-relaxed font-medium">
+                          Sau khi bấm Xác nhận, bạn sẽ được tự động chuyển đến cổng thanh toán PayOS. Hãy mở App Ví để quét mã. Đơn hàng sẽ được duyệt ngay lập tức!
+                        </p>
                       </div>
                     </div>
                   )}
