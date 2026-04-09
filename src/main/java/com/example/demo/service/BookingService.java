@@ -22,10 +22,14 @@ public class BookingService {
         return bookingRepository.save(booking);
     }
 
+    public Booking updateStatus(Long id, com.example.demo.entity.BookingStatus status) {
+        return bookingRepository.findById(id).map(booking -> {
+            booking.setStatus(status);
+            return bookingRepository.save(booking);
+        }).orElseThrow(() -> new RuntimeException("Booking not found: " + id));
+    }
+
     public void cancelBooking(Long id) {
-        bookingRepository.findById(id).ifPresent(booking -> {
-            booking.setStatus(com.example.demo.entity.BookingStatus.CANCELLED);
-            bookingRepository.save(booking);
-        });
+        updateStatus(id, com.example.demo.entity.BookingStatus.CANCELLED);
     }
 }

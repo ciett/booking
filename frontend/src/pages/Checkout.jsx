@@ -20,6 +20,7 @@ const Checkout = () => {
   const [paymentMethod, setPaymentMethod] = useState('bank');
   const [confirmed, setConfirmed] = useState(false);
   const [bookingCode] = useState(() => 'BK' + Date.now().toString().slice(-6));
+  const [currentBookingId, setCurrentBookingId] = useState(null);
 
   useEffect(() => {
     // Nếu user đã đăng nhập, tự động lấy thông tin từ DB để điền sẵn
@@ -51,11 +52,27 @@ const Checkout = () => {
       throw new Error("Missing customer info");
     }
     try {
-      // Tính giá USD (giả định 1 USD = 25000 VND)
+      // 1. Tạo đơn hàng PENDING trong DB trước (nếu chưa có)
+      let bookingId = currentBookingId;
+      if (!bookingId) {
+        const userId = localStorage.getItem('booking_user_id');
+        const bookingData = {
+          userId: userId ? parseInt(userId) : null,
+          bookingType: type.toUpperCase(),
+          totalPrice: totalPrice,
+          status: 'PENDING',
+          details: details,
+          customerInfo: customerInfo
+        };
+        const bookingRes = await api.post('/bookings', bookingData);
+        bookingId = bookingRes.data.id;
+        setCurrentBookingId(bookingId);
+      }
+
+      // 2. Gọi backend tạo order PayPal
       const usdPrice = (totalPrice / 25000).toFixed(2);
-      
       const res = await api.post('/paypal/create-order', { amount: usdPrice });
-      return res.data.id; // Trả về id cho PayPal render
+      return res.data.id; 
     } catch (err) {
       console.error(err);
       message.error("Lỗi khi khởi tạo đơn hàng PayPal");
@@ -65,7 +82,10 @@ const Checkout = () => {
   // Xử lý Capture Order khi thanh toán hoàn tất
   const handleApprovePaypalOrder = async (data, actions) => {
     try {
-      const res = await api.post('/paypal/capture-order', { orderId: data.orderID });
+      const res = await api.post('/paypal/capture-order', { 
+        orderId: data.orderID,
+        bookingId: currentBookingId 
+      });
       const captureData = res.data;
       
       if (captureData.status === 'COMPLETED') {
@@ -100,13 +120,31 @@ const Checkout = () => {
     package: 'fa-solid fa-suitcase-rolling',
   };
 
-  const handleConfirm = (e) => {
+  const handleConfirm = async (e) => {
     e.preventDefault();
     if (!customerInfo.fullName || !customerInfo.email || !customerInfo.phone) {
       message.warning(t('checkout.fillRequired'));
       return;
     }
-    setConfirmed(true);
+
+    try {
+      const userId = localStorage.getItem('booking_user_id');
+      const bookingData = {
+        userId: userId ? parseInt(userId) : null,
+        bookingType: type.toUpperCase(),
+        totalPrice: totalPrice,
+        status: 'PENDING',
+        details: details,
+        customerInfo: customerInfo
+      };
+
+      await api.post('/bookings', bookingData);
+      message.success('Đặt chỗ thành công!');
+      setConfirmed(true);
+    } catch (err) {
+      console.error('Lỗi khi tạo đặt chỗ:', err);
+      message.error('Có lỗi xảy ra khi đặt chỗ. Vui lòng thử lại.');
+    }
   };
 
   // Trang xác nhận thành công

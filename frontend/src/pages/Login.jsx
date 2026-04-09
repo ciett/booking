@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 const Login = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const [email, setEmail] = useState(location.state?.registeredEmail || '');
     const [password, setPassword] = useState('');
@@ -22,14 +24,15 @@ const Login = () => {
                 password
             });
 
-            localStorage.setItem('booking_token', response.data.token);
-            localStorage.setItem('booking_user_id', response.data.id);
-            localStorage.setItem('booking_user', response.data.email);
-            localStorage.setItem('booking_name', response.data.fullName || response.data.email);
-            localStorage.setItem('booking_role', response.data.role);
+            const { token, id, email: userEmail, fullName, role } = response.data;
+            
+            login(token, { id, email: userEmail, fullName, role });
+            
+            localStorage.setItem('booking_user_id', id);
+            localStorage.setItem('booking_role', role);
 
-            // Chuyển hướng về trang chủ
-            navigate('/');
+            const from = location.state?.from?.pathname || '/';
+            navigate(from, { replace: true });
         } catch (err) {
             setError(err.response?.data?.message || 'Email hoặc mật khẩu không đúng. Vui lòng thử lại.');
         } finally {
