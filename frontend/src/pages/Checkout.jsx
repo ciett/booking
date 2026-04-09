@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import api from '../services/api';
+
 const Checkout = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ const Checkout = () => {
   const [bookingCode] = useState(() => 'BK' + Date.now().toString().slice(-8) + Math.random().toString(36).substring(2, 5).toUpperCase());
   const [showQrModal, setShowQrModal] = useState(false);
   const [timeLeft, setTimeLeft] = useState(900); // 15 phút
+  const [currentBookingId, setCurrentBookingId] = useState(null);
 
   useEffect(() => {
      if (statusParam === 'cancel') {
@@ -89,11 +91,36 @@ const Checkout = () => {
       throw new Error("Missing customer info");
     }
     try {
-      // Tính giá USD (giả định 1 USD = 25000 VND)
+      // 1. Tạo đơn hàng PENDING trong DB trước (nếu chưa có)
+      let bookingId = currentBookingId;
+      if (!bookingId) {
+        // MAP loại dịch vụ sang ENUM Backend (BookingType)
+        const typeMap = {
+           'hotel': 'HOTEL',
+           'flight': 'FLIGHT',
+           'car-rentals': 'CAR_RENTAL',
+           'attractions': 'ATTRACTION',
+           'airport-taxis': 'TAXI',
+           'flight-hotel': 'COMBO'
+        };
+
+        const bookingPayload = {
+           user: userId ? { id: userId } : null, 
+           bookingType: typeMap[type] || 'HOTEL',
+           totalPrice: totalPrice,
+           bookingCode: bookingCode,
+           status: 'PENDING'
+        };
+
+        const bookingRes = await api.post('/bookings', bookingPayload);
+        bookingId = bookingRes.data.id;
+        setCurrentBookingId(bookingId);
+      }
+
+      // 2. Gọi backend tạo order PayPal
       const usdPrice = (totalPrice / 25000).toFixed(2);
-      
       const res = await api.post('/paypal/create-order', { amount: usdPrice });
-      return res.data.id; // Trả về id cho PayPal render
+      return res.data.id; 
     } catch (err) {
       console.error(err);
       message.error("Lỗi khi khởi tạo đơn hàng PayPal");
@@ -103,7 +130,10 @@ const Checkout = () => {
   // Xử lý Capture Order khi thanh toán hoàn tất
   const handleApprovePaypalOrder = async (data, actions) => {
     try {
-      const res = await api.post('/paypal/capture-order', { orderId: data.orderID });
+      const res = await api.post('/paypal/capture-order', { 
+        orderId: data.orderID,
+        bookingId: currentBookingId 
+      });
       const captureData = res.data;
       
       if (captureData.status === 'COMPLETED') {
@@ -390,7 +420,7 @@ const Checkout = () => {
                           <p className={`text-xs font-bold ${selectedWallet === 'momo' ? 'text-pink-600' : 'text-gray-700'}`}>MoMo</p>
                         </button>
                         <button type="button" onClick={() => setSelectedWallet('zalopay')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'zalopay' ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 hover:border-blue-300 bg-white'}`}>
-                          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold mb-2 shadow-sm">Z</div>
+                          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold mb-2 shadow-sm">ZaloPay</div>
                           <p className={`text-xs font-bold ${selectedWallet === 'zalopay' ? 'text-blue-600' : 'text-gray-700'}`}>ZaloPay</p>
                         </button>
                         <button type="button" onClick={() => setSelectedWallet('vnpay')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'vnpay' ? 'border-red-500 bg-red-50 shadow-sm' : 'border-gray-200 hover:border-red-300 bg-white'}`}>

@@ -19,17 +19,18 @@ import Business from './pages/Business';
 import Account from './pages/Account';
 import Checkout from './pages/Checkout';
 import PropertySubmission from './pages/PropertySubmission';
+import { ConfigProvider } from './context/ConfigContext';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
   const { pathname } = location;
 
-  // Tự động cuộn lên đầu trang mỗi khi chuyển trang (Chuyển vào đây)
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
 
-  // Kiểm tra nếu là trang Auth thì ẩn Navbar/Footer
   const isAuthPage = pathname === '/login' || pathname === '/register';
 
   return (
@@ -52,8 +53,8 @@ function AppContent() {
           <Route path="/customer-service" element={<CustomerService />} />
           <Route path="/become-partner" element={<BecomePartner />} />
           <Route path="/business" element={<Business />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/checkout" element={<Checkout />} />
+          <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
           <Route path="/submit-property" element={<PropertySubmission />} />
         </Routes>
       </main>
@@ -65,9 +66,13 @@ function AppContent() {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <AuthProvider>
+      <ConfigProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </ConfigProvider>
+    </AuthProvider>
   );
 }
 

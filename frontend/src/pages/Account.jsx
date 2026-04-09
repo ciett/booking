@@ -10,6 +10,12 @@ import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import api from '../services/api';
 import dayjs from 'dayjs';
+import FlightIcon from '@mui/icons-material/FlightTakeoff';
+import HotelIcon from '@mui/icons-material/Hotel';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import AttractionIcon from '@mui/icons-material/LocationOn';
+import TaxiIcon from '@mui/icons-material/LocalTaxi';
+import ComboIcon from '@mui/icons-material/CardGiftcard';
 
 const Account = () => {
   const { t, i18n } = useTranslation();
@@ -253,19 +259,54 @@ const Account = () => {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {bookings.map(book => (
-                            <div key={book.id} className="border border-gray-200 p-5 rounded-xl hover:shadow-md transition bg-white flex flex-col md:flex-row justify-between md:items-center gap-4">
-                                <div>
-                                    <span className="bg-blue-100 text-booking-blue text-xs font-bold px-2 py-1 uppercase rounded tracking-wider mb-2 inline-block">Mã Đặt #{book.id}</span>
-                                    <h4 className="font-bold text-lg text-gray-800">{book.serviceType === 'FLIGHT' ? 'Vé Máy Bay' : book.serviceType === 'HOTEL' ? 'Khách Sạn' : book.serviceType}</h4>
-                                    <p className="text-sm text-gray-500 mt-1">Trạng thái: <strong className={book.status === 'CONFIRMED' ? 'text-green-600' : 'text-gray-600'}>{book.status}</strong></p>
+                        {bookings.map(book => {
+                            const getServiceInfo = (type) => {
+                                switch(type) {
+                                    case 'FLIGHT': return { label: 'Vé Máy Bay', icon: <FlightIcon className="text-blue-500" /> };
+                                    case 'HOTEL': return { label: 'Khách Sạn', icon: <HotelIcon className="text-orange-500" /> };
+                                    case 'CAR_RENTAL': return { label: 'Thuê Xe', icon: <DirectionsCarIcon className="text-green-500" /> };
+                                    case 'ATTRACTION': return { label: 'Địa Điểm Tham Quan', icon: <AttractionIcon className="text-purple-500" /> };
+                                    case 'TAXI': return { label: 'Taxi Sân Bay', icon: <TaxiIcon className="text-yellow-600" /> };
+                                    case 'COMBO': return { label: 'Combo Tiết Kiệm', icon: <ComboIcon className="text-pink-500" /> };
+                                    default: return { label: type, icon: <HistoryIcon /> };
+                                }
+                            };
+                            const info = getServiceInfo(book.bookingType);
+                            
+                            return (
+                                <div key={book.id} className="border border-gray-100 p-5 rounded-2xl hover:shadow-lg transition-all duration-300 bg-white flex flex-col md:flex-row justify-between md:items-center gap-4 group">
+                                    <div className="flex items-start gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-gray-50 flex items-center justify-center shadow-xs group-hover:scale-110 transition-transform">
+                                            {info.icon}
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2 mb-1">
+                                                <span className="bg-blue-50 text-booking-blue text-[10px] font-bold px-2 py-0.5 uppercase rounded tracking-wider">Mã Đặt #{book.id}</span>
+                                                <span className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                                                    book.status === 'CONFIRMED' ? 'bg-green-100 text-green-700' : 
+                                                    book.status === 'CANCELLED' ? 'bg-red-100 text-red-700' : 
+                                                    'bg-orange-100 text-orange-700'
+                                                }`}>
+                                                    {book.status === 'CONFIRMED' ? 'Đã xác nhận' : 
+                                                     book.status === 'CANCELLED' ? 'Đã hủy' : 
+                                                     book.status === 'PENDING' ? 'Chờ xử lý' : book.status}
+                                                </span>
+                                            </div>
+                                            <h4 className="font-bold text-lg text-gray-800">{info.label}</h4>
+                                            <p className="text-xs text-gray-400 font-medium">Ngày đặt: {dayjs(book.createdAt).format('DD/MM/YYYY HH:mm')}</p>
+                                        </div>
+                                    </div>
+                                    <div className="md:text-right border-t md:border-t-0 pt-3 md:pt-0">
+                                        <div className="text-xl font-black text-booking-blue tracking-tight">
+                                            {book.totalPrice?.toLocaleString('vi-VN')} <span className="text-sm font-bold">VND</span>
+                                        </div>
+                                        <button className="text-xs font-bold text-[#006ce4] hover:underline mt-1 bg-transparent border-none p-0 cursor-pointer">
+                                            Xem chi tiết &rarr;
+                                        </button>
+                                    </div>
                                 </div>
-                                <div className="md:text-right">
-                                    <div className="text-xl font-extrabold text-booking-blue">{book.totalPrice?.toLocaleString('vi-VN')} VND</div>
-                                    <p className="text-xs text-gray-400 mt-1">Ngày đặt: {dayjs(book.bookingDate).format('DD/MM/YYYY HH:mm')}</p>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        })}
                     </div>
                 )}
               </div>
