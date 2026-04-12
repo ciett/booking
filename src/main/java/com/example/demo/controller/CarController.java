@@ -18,7 +18,7 @@ public class CarController {
 
     @Autowired
     private CarService carService;
-    
+
     @Autowired
     private CarLocationRepository carLocationRepository;
 

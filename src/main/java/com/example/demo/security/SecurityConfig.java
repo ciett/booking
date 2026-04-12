@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/cars", "/api/cars/**").permitAll()
                         .requestMatchers("/api/attractions", "/api/attractions/**").permitAll()
                         .requestMatchers("/api/airport-taxis", "/api/airport-taxis/**").permitAll()
+                        .requestMatchers("/api/config/**").permitAll() // Thêm cấu hình chung
                         .requestMatchers("/api/payment", "/api/payment/**").permitAll() // Thêm cổng thanh toán
                         .requestMatchers("/api/email", "/api/email/**").permitAll() // API gửi email
                         .requestMatchers("/api/chat", "/api/chat/**").permitAll() // API cho Chatbot AI
