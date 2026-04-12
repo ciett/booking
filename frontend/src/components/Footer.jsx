@@ -2,34 +2,50 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
+const NAVY = '#003580';
+
 const Footer = () => {
     const { t } = useTranslation();
+    const links = [
+        { to: '/account',          label: t('footer.yourAccount') },
+        { to: '/customer-service', label: t('footer.customerService') },
+        { to: '/become-partner',   label: t('footer.becomePartner') },
+        { to: '/business',         label: t('footer.bookingForBusiness') },
+    ];
     return (
-        <footer className="bg-booking-blue text-white mt-10">
-            <div className="section-container py-6 text-center">
-                
-                <div className="h-px bg-white bg-opacity-20 mb-6"></div>
-                
-                <ul className="flex flex-wrap justify-center space-x-4 space-y-2 md:space-y-0 text-sm font-semibold underline mb-4">
-                    <li><Link to="/account" className="hover:text-blue-400">{t('footer.yourAccount')}</Link></li>
-                    <Link to="/customer-service" className="hover:text-blue-400">
-                        {t('footer.customerService')}
-                    </Link>
-                    <li>
-                        <Link to="/become-partner" className="hover:text-blue-400">
-                            {t('footer.becomePartner')}
-                        </Link>
-                    </li>
-                    <li>
-                        <Link to="/business" className="hover:text-blue-400">
-                            {t('footer.bookingForBusiness')}
-                        </Link>
-                    </li>
-                </ul>
-            </div>
-            
-            <div className="bg-booking-dark text-white text-xs py-4 text-center">
-                {t('footer.copyright')}
+        <footer style={{ background: NAVY, fontFamily: "'Inter', sans-serif" }}>
+            <div className="max-w-6xl mx-auto px-6 py-10">
+                {/* Top row */}
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 pb-6"
+                    style={{ borderBottom: '1px solid rgba(255,255,255,0.15)' }}>
+                    <span className="text-white text-lg font-black tracking-tight">Booking.com</span>
+                    <div className="flex flex-wrap gap-5">
+                        {links.map(l => (
+                            <Link key={l.to} to={l.to}
+                                className="text-sm font-semibold underline transition-colors"
+                                style={{ color: 'rgba(255,255,255,0.8)' }}
+                                onMouseOver={e => e.target.style.color = '#fff'}
+                                onMouseOut={e => e.target.style.color = 'rgba(255,255,255,0.8)'}>
+                                {l.label}
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+                {/* Bottom row */}
+                <div className="pt-5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p className="text-xs" style={{ color: 'rgba(255,255,255,0.6)' }}>{t('footer.copyright')}</p>
+                    <div className="flex gap-3">
+                        {['fa-twitter','fa-facebook','fa-instagram','fa-linkedin'].map(icon => (
+                            <button key={icon}
+                                className="w-8 h-8 rounded-full flex items-center justify-center transition-all"
+                                style={{ background: 'rgba(255,255,255,0.12)' }}
+                                onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+                                onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.12)'}>
+                                <i className={`fa-brands ${icon} text-xs text-white`}></i>
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
         </footer>
     );

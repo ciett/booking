@@ -1,128 +1,115 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import SocialButtons from '../components/SocialButtons';
+
+const CB   = '#006ce4';
+const NAVY = '#003580';
+const inputCls = "w-full px-4 py-3 rounded-xl text-sm font-medium outline-none transition-all bg-white border border-gray-300 focus:border-[#006ce4] focus:ring-2 focus:ring-[#006ce420] placeholder:text-gray-400 text-gray-900";
+
+let useAuth;
+try { useAuth = require('../context/AuthContext').useAuth; } catch(e) { useAuth = () => ({ login: null }); }
 
 const Register = () => {
-    const [formData, setFormData] = useState({
-        fullName: '',
-        phoneNumber: '',
-        email: '',
-        password: ''
-    });
-    const [status, setStatus] = useState({ type: '', message: '' });
-    const [loading, setLoading] = useState(false);
-
+    const [formData, setFormData] = useState({ fullName: '', phoneNumber: '', email: '', password: '' });
+    const [status, setStatus]     = useState({ type: '', message: '' });
+    const [loading, setLoading]   = useState(false);
     const navigate = useNavigate();
+    let login = null;
+    try { login = useAuth()?.login; } catch(e){}
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+    const handleChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setLoading(true);
-        setStatus({ type: '', message: '' });
-
+        setLoading(true); setStatus({ type: '', message: '' });
         try {
             const response = await axios.post('/api/auth/register', formData);
-
-            setStatus({ 
-                type: 'success', 
-                message: response.data.message || 'Đăng ký thành công! Đang chuyển hướng...' 
-            });
-
-            setTimeout(() => {
-                navigate('/login', { state: { registeredEmail: formData.email } });
-            }, 1500);
+            setStatus({ type: 'success', message: response.data.message || 'Đăng ký thành công!' });
+            setTimeout(() => navigate('/login', { state: { registeredEmail: formData.email } }), 1500);
         } catch (err) {
-            setStatus({
-                type: 'error',
-                message: err.response?.data?.message || 'Đăng ký thất bại. Vui lòng thử lại.'
-            });
+            setStatus({ type: 'error', message: err.response?.data?.message || 'Đăng ký thất bại.' });
             setLoading(false);
         }
     };
 
+    const handleSocialLogin = async (provider, token, email, name) => {
+        setLoading(true); setStatus({ type: '', message: '' });
+        try {
+            const response = await axios.post('/api/auth/social-login', { provider, token, email, name });
+            const { token: jwt, id, email: userEmail, fullName, role } = response.data;
+            localStorage.setItem('booking_token', jwt);
+            localStorage.setItem('booking_user_id', id);
+            localStorage.setItem('booking_user', userEmail);
+            localStorage.setItem('booking_name', fullName || userEmail);
+            localStorage.setItem('booking_role', role);
+            if (login) login(jwt, { id, email: userEmail, fullName, role });
+            navigate('/', { replace: true });
+        } catch (err) {
+            setStatus({ type: 'error', message: err.response?.data?.message || `Đăng nhập ${provider} thất bại.` });
+            setLoading(false);
+        }
+    };
+
+    const fields = [
+        { name: 'fullName',    type: 'text',     label: 'Họ và tên',       placeholder: 'Nguyễn Văn A', required: true },
+        { name: 'phoneNumber', type: 'tel',      label: 'Số điện thoại',   placeholder: '09xxxxxxxx',   required: false },
+        { name: 'email',       type: 'email',    label: 'Địa chỉ email',   placeholder: 'email@example.com', required: true },
+        { name: 'password',    type: 'password', label: 'Mật khẩu',        placeholder: 'Tạo mật khẩu mạnh', required: true },
+    ];
+
     return (
-        <div className="grow flex items-center justify-center p-4 bg-gray-50 h-screen">
-            <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 border border-gray-100">
-                <Link to="/" className="text-booking-blue font-bold text-2xl block text-center mb-6">Booking.com</Link>
-                <h1 className="text-2xl font-bold mb-6 text-gray-900">Tạo tài khoản</h1>
+        <div className="min-h-screen flex items-center justify-center px-4 py-12"
+            style={{ background: '#f2f2f2', fontFamily: "'Inter', sans-serif" }}>
+            <div className="w-full max-w-md bg-white rounded-2xl shadow-lg overflow-hidden">
+                {/* Blue header strip */}
+                <div className="px-8 pt-8 pb-6" style={{ background: NAVY }}>
+                    <Link to="/" className="text-white font-black text-xl no-underline block mb-4">Booking.com</Link>
+                    <h1 className="text-white font-bold text-2xl">Tạo tài khoản</h1>
+                    <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.75)' }}>
+                        Tham gia miễn phí và nhận ưu đãi thành viên
+                    </p>
+                </div>
 
-                <form onSubmit={handleRegister} className="space-y-4">
-                    <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Họ và tên</label>
-                        <input
-                            type="text"
-                            name="fullName"
-                            required
-                            placeholder="Nhập họ và tên của bạn"
-                            value={formData.fullName}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
-                        />
-                    </div>
+                {/* Form */}
+                <div className="px-8 py-6">
+                    <form onSubmit={handleRegister} className="space-y-4">
+                        {fields.map(f => (
+                            <div key={f.name}>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">{f.label}</label>
+                                <input type={f.type} name={f.name} required={f.required}
+                                    placeholder={f.placeholder} value={formData[f.name]}
+                                    onChange={handleChange} className={inputCls} />
+                            </div>
+                        ))}
 
-                    <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Số điện thoại</label>
-                        <input
-                            type="tel"
-                            name="phoneNumber"
-                            placeholder="Nhập số điện thoại"
-                            value={formData.phoneNumber}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Địa chỉ email</label>
-                        <input
-                            type="email"
-                            name="email"
-                            required
-                            placeholder="name@domain.com"
-                            value={formData.email}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
-                        />
-                    </div>
-
-                    <div>
-                        <label className="block mb-1 text-sm font-semibold text-gray-700">Mật khẩu</label>
-                        <input
-                            type="password"
-                            name="password"
-                            required
-                            placeholder="Tạo mật khẩu mạnh"
-                            value={formData.password}
-                            onChange={handleChange}
-                            className="w-full px-4 py-2 border border-gray-400 rounded focus:outline-none focus:border-booking-blue focus:ring-1 focus:ring-booking-blue transition"
-                        />
-                    </div>
-
-                    {status.message && (
-                        <div className={`text-sm p-3 rounded font-medium border ${status.type === 'error' ? 'text-red-600 bg-red-50 border-red-200' : 'text-green-700 bg-green-50 border-green-200'
+                        {status.message && (
+                            <div className={`text-sm font-medium p-3 rounded-xl border ${
+                                status.type === 'error'
+                                    ? 'bg-red-50 text-red-700 border-red-200'
+                                    : 'bg-green-50 text-green-700 border-green-200'
                             }`}>
-                            {status.message}
-                        </div>
-                    )}
+                                {status.message}
+                            </div>
+                        )}
 
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full bg-booking-blue text-white font-bold py-3 px-4 rounded hover:bg-booking-dark transition-colors mt-2 disabled:opacity-70"
-                    >
-                        {loading ? 'Đang tạo...' : 'Tạo tài khoản'}
-                    </button>
-                </form>
+                        <button type="submit" disabled={loading}
+                            className="w-full font-bold py-3 rounded-xl text-white transition-all disabled:opacity-60 mt-2"
+                            style={{ background: loading ? '#578bfa' : CB }}
+                            onMouseOver={e => { if (!loading) e.currentTarget.style.background = NAVY; }}
+                            onMouseOut={e => { if (!loading) e.currentTarget.style.background = CB; }}>
+                            {loading ? 'Đang tải...' : 'Tạo tài khoản'}
+                        </button>
+                    </form>
 
-                <div className="mt-6 text-center text-sm">
-                    <span className="text-gray-600">Bạn đã có tài khoản? </span>
-                    <Link to="/login" className="text-booking-blue hover:underline font-semibold">Đăng nhập</Link>
+                    <SocialButtons onAuthSuccess={handleSocialLogin} loading={loading} />
+
+                    <div className="mt-5 text-center text-sm text-gray-600">
+                        Đã có tài khoản?{' '}
+                        <Link to="/login" className="font-bold no-underline" style={{ color: CB }}>
+                            Đăng nhập
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>
