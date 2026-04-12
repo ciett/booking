@@ -22,6 +22,7 @@ import PropertySubmission from './pages/PropertySubmission';
 import { ConfigProvider } from './context/ConfigContext';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import FloatingChatbot from './components/FloatingChatbot';
 
 function AppContent() {
   const location = useLocation();
@@ -34,7 +35,7 @@ function AppContent() {
   const isAuthPage = pathname === '/login' || pathname === '/register';
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen relative">
       {!isAuthPage && <Navbar />}
 
       <main className="grow">
@@ -60,6 +61,7 @@ function AppContent() {
       </main>
 
       {!isAuthPage && <Footer />}
+      {!isAuthPage && <FloatingChatbot />}
     </div>
   );
 }

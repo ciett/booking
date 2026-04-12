@@ -36,6 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/airport-taxis", "/api/airport-taxis/**").permitAll()
                         .requestMatchers("/api/payment", "/api/payment/**").permitAll() // Thêm cổng thanh toán
                         .requestMatchers("/api/email", "/api/email/**").permitAll() // API gửi email
+                        .requestMatchers("/api/chat", "/api/chat/**").permitAll() // API cho Chatbot AI
                         .requestMatchers(org.springframework.http.HttpMethod.GET, "/api/bookings/status/**").permitAll() // Cho phép polling status không cần token
                         .requestMatchers("/", "/index.html", "/css/**", "/js/**", "/images/**").permitAll() // Mở khóa trang chủ
                         .requestMatchers("/error").permitAll()

@@ -32,7 +32,10 @@ const Login = () => {
             localStorage.setItem('booking_role', role);
 
             // Chuyển hướng về trang chủ hoặc trang trước đó
-            const redirectPath = location.state?.from?.pathname + (location.state?.from?.search || '') || '/';
+            let redirectPath = '/';
+            if (location.state?.from?.pathname) {
+                redirectPath = location.state.from.pathname + (location.state.from.search || '');
+            }
             navigate(redirectPath, { replace: true });
         } catch (err) {
             setError(err.response?.data?.message || 'Email hoặc mật khẩu không đúng. Vui lòng thử lại.');

@@ -1,18 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Input, Collapse, ConfigProvider } from 'antd';
 import { 
     SearchOutlined, 
     QuestionCircleOutlined, 
     MessageOutlined, 
     PhoneOutlined, 
-    MailOutlined 
+    MailOutlined,
+    CloseOutlined,
+    SendOutlined,
+    RobotOutlined
 } from '@ant-design/icons';
 import { Button } from '@mui/material';
+import api from '../services/api';
 
 const { Panel } = Collapse;
 
 const CustomerService = () => {
     const [searchText, setSearchText] = useState('');
+
+    const [isChatOpen, setIsChatOpen] = useState(false);
+    const [chatMessages, setChatMessages] = useState([
+        { sender: 'bot', text: 'Xin chào! Tôi là Gemma, trợ lý AI của Booking. Bạn cần hỗ trợ gì ạ?' }
+    ]);
+    const [chatInput, setChatInput] = useState('');
+    const [isChatLoading, setIsChatLoading] = useState(false);
+    const messagesEndRef = useRef(null);
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    };
+
+    useEffect(() => {
+        scrollToBottom();
+    }, [chatMessages, isChatLoading]);
+
+    const handleSendChat = async () => {
+        if (!chatInput.trim()) return;
+        
+        const userMsg = chatInput.trim();
+        setChatMessages(prev => [...prev, { sender: 'user', text: userMsg }]);
+        setChatInput('');
+        setIsChatLoading(true);
+
+        try {
+            const res = await api.post('/chat/ask', { message: userMsg });
+            setChatMessages(prev => [...prev, { sender: 'bot', text: res.data.response }]);
+        } catch (error) {
+            setChatMessages(prev => [...prev, { 
+                sender: 'bot', 
+                text: 'Xin lỗi, Gemma đang bận hoặc server chưa bật AI. Bạn vui lòng thử lại sau nhé!' 
+            }]);
+        } finally {
+            setIsChatLoading(false);
+        }
+    };
 
     const faqs = [
         {
@@ -68,8 +109,13 @@ const CustomerService = () => {
                         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col items-center text-center">
                             <MessageOutlined className="text-3xl text-green-600 mb-3" />
                             <h3 className="font-bold text-lg">Chat trực tuyến</h3>
-                            <p className="text-gray-500 text-sm mb-2">Trao đổi trực tiếp với nhân viên</p>
-                            <button className="text-green-700 font-bold hover:underline">Bắt đầu chat ngay</button>
+                            <p className="text-gray-500 text-sm mb-2">Trao đổi trực tiếp với nhân viên AI</p>
+                            <button 
+                                onClick={() => setIsChatOpen(true)}
+                                className="text-green-700 font-bold hover:underline"
+                            >
+                                Bắt đầu chat ngay
+                            </button>
                         </div>
                         <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100 flex flex-col items-center text-center">
                             <MailOutlined className="text-3xl text-red-600 mb-3" />
@@ -115,6 +161,77 @@ const CustomerService = () => {
                         </Button>
                     </div>
                 </div>
+
+                {/* Floating Chat Widget */}
+                {isChatOpen && (
+                    <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 w-[350px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50 overflow-hidden animate-fade-in-up">
+                        {/* Chat Header */}
+                        <div className="bg-[#003b95] text-white p-4 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <RobotOutlined className="text-2xl" />
+                                <div>
+                                    <h3 className="font-bold leading-tight">Trợ lý ảo Gemma</h3>
+                                    <p className="text-[10px] text-blue-200">Powered by Ollama AI</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setIsChatOpen(false)} className="text-white hover:text-gray-300">
+                                <CloseOutlined />
+                            </button>
+                        </div>
+
+                        {/* Chat Body */}
+                        <div className="flex-1 p-4 h-[350px] overflow-y-auto bg-gray-50 flex flex-col gap-3">
+                            {chatMessages.map((msg, idx) => (
+                                <div key={idx} className={`flex gap-2 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
+                                    {msg.sender === 'bot' && (
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                                            <RobotOutlined />
+                                        </div>
+                                    )}
+                                    <div className={`p-3 rounded-2xl max-w-[85%] text-sm leading-relaxed ${
+                                        msg.sender === 'user' 
+                                            ? 'bg-[#003b95] text-white rounded-br-none' 
+                                            : 'bg-white border border-gray-200 text-gray-800 rounded-bl-none shadow-sm'
+                                    }`}>
+                                        {msg.text}
+                                    </div>
+                                </div>
+                            ))}
+                            {isChatLoading && (
+                                <div className="flex gap-2 justify-start items-center">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                                        <RobotOutlined />
+                                    </div>
+                                    <div className="p-3 bg-white border border-gray-200 rounded-2xl rounded-bl-none shadow-sm flex items-center gap-1">
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                                    </div>
+                                </div>
+                            )}
+                            <div ref={messagesEndRef} />
+                        </div>
+
+                        {/* Chat Footer */}
+                        <div className="p-3 bg-white border-t border-gray-100 flex items-center gap-2">
+                            <input 
+                                type="text"
+                                value={chatInput}
+                                onChange={(e) => setChatInput(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && handleSendChat()}
+                                placeholder="Nhập câu hỏi..."
+                                className="flex-1 border-none focus:ring-0 outline-none px-2 text-sm"
+                            />
+                            <button 
+                                onClick={handleSendChat}
+                                disabled={isChatLoading || !chatInput.trim()}
+                                className="w-10 h-10 rounded-full bg-[#003b95] text-white flex items-center justify-center disabled:opacity-50 hover:bg-[#002d73] transition-colors shrink-0"
+                            >
+                                <SendOutlined />
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </ConfigProvider>
     );

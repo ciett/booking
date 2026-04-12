@@ -6,12 +6,14 @@ import dayjs from 'dayjs';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import DetailOverlay from '../components/DetailOverlay';
+import { useConfig } from '../context/ConfigContext';
 
 const { RangePicker } = DatePicker;
 
 const Attractions = () => {
     const { t } = useTranslation();
     const navigate = useNavigate();
+    const { getImage } = useConfig();
     const [city, setCity] = useState('');
     const [dates, setDates] = useState(null);
 
@@ -89,7 +91,14 @@ const Attractions = () => {
             <div className="w-full flex flex-col items-center bg-gray-50 min-h-screen text-black">
 
                 {/* Banner */}
-        <div className="bg-linear-to-br from-booking-blue via-blue-800 to-indigo-900 text-white relative w-full pt-12 pb-24 px-4 sm:px-6 lg:px-8 shadow-inner overflow-hidden">
+        <div 
+          className="bg-linear-to-br from-booking-blue via-blue-800 to-indigo-900 text-white relative w-full pt-12 pb-24 px-4 sm:px-6 lg:px-8 shadow-inner overflow-hidden"
+          style={{
+            backgroundImage: getImage('img.attractions.hero') ? `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${getImage('img.attractions.hero')})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
             <div className="max-w-6xl mx-auto relative z-10 animate-fade-in-up">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">{t('attractions.heroTitle')}</h1>

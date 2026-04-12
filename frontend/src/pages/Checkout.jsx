@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
-import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { PayPalScriptProvider, PayPalButtons, FUNDING } from "@paypal/react-paypal-js";
 import api from '../services/api';
 
 const Checkout = () => {
@@ -452,7 +452,7 @@ const Checkout = () => {
                     </div>
                   )}
 
-                  {/* Nhóm 3: Thanh toán quốc tế (PayPal / Thẻ Visa, Mastercard) */}
+                  {/* Nhóm 3: Thanh toán bằng Ví điện tử Toàn cầu (PayPal Wallet) */}
                   <label
                     className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
                       ${paymentMethod === 'paypal' ? 'border-[#003b95] bg-blue-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
@@ -460,29 +460,75 @@ const Checkout = () => {
                   >
                     <input type="radio" name="payment" value="paypal" checked={paymentMethod === 'paypal'} onChange={() => setPaymentMethod('paypal')} className="accent-[#003b95] w-5 h-5" />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Thanh toán quốc tế (PayPal / Thẻ Visa, Mastercard)</p>
-                      <p className="text-xs text-gray-500">Thanh toán bảo mật toàn cầu, chấp nhận hầu hết loại thẻ</p>
+                      <p className="font-bold text-gray-900">Ví điện tử quốc tế (PayPal Wallet)</p>
+                      <p className="text-xs text-gray-500">Đăng nhập tài khoản PayPal để thanh toán nhanh chóng</p>
                     </div>
                     <div className="flex gap-2 text-[#00457C]">
-                        <i className="fa-brands fa-paypal text-2xl"></i>
-                        <i className="fa-brands fa-cc-visa text-2xl"></i>
-                        <i className="fa-brands fa-cc-mastercard text-2xl"></i>
+                        <i className="fa-brands fa-paypal text-3xl"></i>
                     </div>
                   </label>
 
                   {paymentMethod === 'paypal' && (
-                    <div className="ml-9 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in-up">
-                      <p className="text-sm font-semibold text-gray-700 mb-4">{t('checkout.paypalInstruction', 'Bạn có thể thanh toán bằng số dư PayPal hoặc thẻ Visa/Mastercard trực tiếp bên dưới:')}</p>
+                    <div className="ml-9 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in-up flex flex-col items-center">
+                      <p className="text-sm border-b border-gray-200 pb-2 font-semibold text-gray-700 w-full mb-4 text-center">Bấm vào nút PayPal bên dưới để đăng nhập ví của bạn</p>
                       <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD" }}>
                         {totalPrice > 0 ? (
-                          <PayPalButtons 
-                            createOrder={handleCreatePaypalOrder}
-                            onApprove={handleApprovePaypalOrder}
-                            style={{ layout: "vertical", shape: "rect", color: "gold" }}
-                          />
+                          <div className="w-full max-w-sm">
+                            <PayPalButtons 
+                              fundingSource={FUNDING.PAYPAL}
+                              createOrder={handleCreatePaypalOrder}
+                              onApprove={handleApprovePaypalOrder}
+                              style={{ layout: "vertical", shape: "rect", color: "gold", height: 50 }}
+                            />
+                          </div>
+                        ) : (
+                          <div className="p-4 bg-orange-50 border border-orange-200 text-orange-600 rounded-xl text-center text-sm font-semibold w-full">
+                            Vui lòng chọn sản phẩm có giá trị lớn hơn 0.
+                          </div>
+                        )}
+                      </PayPalScriptProvider>
+                    </div>
+                  )}
+
+                  {/* Nhóm 4: Thanh toán bằng Thẻ Tín dụng / Thẻ Ghi nợ Quốc tế (Visa, Mastercard qua cổng PayPal) */}
+                  <label
+                    className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all
+                      ${paymentMethod === 'visa' ? 'border-[#003b95] bg-blue-50 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}
+                    onClick={() => setPaymentMethod('visa')}
+                  >
+                    <input type="radio" name="payment" value="visa" checked={paymentMethod === 'visa'} onChange={() => setPaymentMethod('visa')} className="accent-[#003b95] w-5 h-5" />
+                    <div className="flex-1">
+                      <p className="font-bold text-gray-900">Thẻ thanh toán Quốc tế (Visa, Mastercard, Amex)</p>
+                      <p className="text-xs text-gray-500">Bảo mật giao dịch cao cấp với cổng thanh toán PayPal</p>
+                    </div>
+                    <div className="flex gap-2 text-[#eb001b]">
+                        <i className="fa-brands fa-cc-visa text-3xl text-[#1a1f71]"></i>
+                        <i className="fa-brands fa-cc-mastercard text-3xl"></i>
+                    </div>
+                  </label>
+
+                  {paymentMethod === 'visa' && (
+                    <div className="ml-9 p-5 bg-white rounded-xl border border-gray-200 shadow-sm animate-fade-in-up">
+                      <div className="flex items-start justify-between mb-4 border-b border-gray-100 pb-3">
+                         <p className="text-sm font-bold text-gray-800">Nhập thông tin Thẻ Tín Dụng / Ghi nợ:</p>
+                         <i className="fa-solid fa-lock text-green-600" title="Secured by PayPal"></i>
+                      </div>
+                      <div className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100 text-sm italic text-gray-600 text-center">
+                        * Thông tin thẻ của bạn được mã hóa an toàn 256-bit qua hệ thống PayPal.
+                      </div>
+                      <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD", intent: "capture" }}>
+                        {totalPrice > 0 ? (
+                          <div className="payment-card-container w-full max-w-md mx-auto">
+                            <PayPalButtons 
+                              fundingSource={FUNDING.CARD}
+                              createOrder={handleCreatePaypalOrder}
+                              onApprove={handleApprovePaypalOrder}
+                              style={{ layout: "vertical", shape: "rect", color: "black", label: "pay" }}
+                            />
+                          </div>
                         ) : (
                           <div className="p-4 bg-orange-50 border border-orange-200 text-orange-600 rounded-xl text-center text-sm font-semibold">
-                            Vui lòng chọn sản phẩm có giá trị lớn hơn 0 để thanh toán qua PayPal.
+                            Vui lòng chọn sản phẩm có giá trị lớn hơn 0.
                           </div>
                         )}
                       </PayPalScriptProvider>
@@ -540,7 +586,7 @@ const Checkout = () => {
                 </div>
 
                 {/* Nút xác nhận */}
-                {paymentMethod !== 'paypal' ? (
+                {paymentMethod === 'bank' || paymentMethod === 'ewallet' ? (
                   <button
                     type="submit"
                     disabled={orderStatus === 'processing'}
@@ -556,7 +602,7 @@ const Checkout = () => {
                 ) : (
                   <div className="w-full text-center bg-blue-50 text-[#00457C] font-semibold py-4 rounded-xl transition-all duration-200 text-sm border border-blue-200 border-dashed animate-pulse">
                     <i className="fa-solid fa-arrow-left mr-2"></i>
-                    Bấm nút PayPal ở khung bên trái để tiến hành thanh toán
+                    Bấm khung bảo mật của đối tác ở phần bên trái tài khoản
                   </div>
                 )}
 

@@ -9,12 +9,14 @@ import HotelIcon from '@mui/icons-material/Hotel';
 import GroupIcon from '@mui/icons-material/Group';
 import DetailOverlay from '../components/DetailOverlay';
 import { useTranslation } from 'react-i18next';
+import { useConfig } from '../context/ConfigContext';
 
 const { RangePicker } = DatePicker;
 
 const FlightAndHotel = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { getImage } = useConfig();
   const disabledDate = (current) => current && current < dayjs().startOf('day');
 
   const [airports, setAirports] = useState([]);
@@ -98,7 +100,14 @@ const FlightAndHotel = () => {
       <div className="w-full flex flex-col items-center bg-gray-50 min-h-screen">
         
         {/* Banner Đặc trưng cho Packages */}
-        <div className="bg-linear-to-br from-booking-blue via-blue-800 to-indigo-900 text-white relative w-full pt-12 pb-24 px-4 sm:px-6 lg:px-8 shadow-inner overflow-hidden">
+        <div 
+          className="bg-linear-to-br from-booking-blue via-blue-800 to-indigo-900 text-white relative w-full pt-12 pb-24 px-4 sm:px-6 lg:px-8 shadow-inner overflow-hidden"
+          style={{
+            backgroundImage: getImage('img.flighthotel.hero') ? `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url(${getImage('img.flighthotel.hero')})` : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
             <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
             <div className="max-w-6xl mx-auto relative z-10 animate-fade-in-up">
                 <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">{t('flightAndHotel.heroTitle')}</h1>
