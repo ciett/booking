@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${emailTitle}">Booking Email</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #f5f5f5;">
+
+    <!-- Container -->
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); border: 1px solid #e5e5e5;">
+                    
+                    <!-- Header -->
+                    <tr>
+                        <td style="background-color: #003b95; padding: 30px 40px; text-align: left; border-bottom: 4px solid #ffb700;">
+                            <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">
+                                Booking
+                            </h1>
+                            <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 14px; font-weight: 500;">
+                                Dịch vụ đặt phòng & du lịch
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Title & Greeting -->
+                    <tr>
+                        <td style="padding: 30px 40px 15px 40px;">
+                            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                                <h2 th:text="${emailTitle}" style="color: #1a1a1a; margin: 0; font-size: 20px; font-weight: 700;">
+                                    Tiêu đề Email
+                                </h2>
+                                <span th:style="'display: inline-block; padding: 6px 16px; border-radius: 4px; font-size: 13px; font-weight: 700; color: #ffffff; background-color: ' + ${statusColor}"
+                                      th:text="${statusText}">
+                                    Trạng thái
+                                </span>
+                            </div>
+
+                            <p style="color: #1a1a1a; margin: 0 0 10px 0; font-size: 15px; line-height: 1.5;">
+                                Xin chào <strong th:text="${customerName}">Quý Khách</strong>,
+                            </p>
+                            <p th:text="${statusMessage}" style="color: #4a4a4a; margin: 0; font-size: 15px; line-height: 1.5;">
+                                Thông tin trạng thái...
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Booking Details -->
+                    <tr>
+                        <td style="padding: 15px 40px 30px 40px;">
+                            <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border: 1px solid #e5e5e5; border-radius: 6px;">
+                                <tr>
+                                    <td style="padding: 15px 20px; background-color: #f5f5f5; border-bottom: 1px solid #e5e5e5;">
+                                        <h3 style="color: #1a1a1a; margin: 0; font-size: 16px; font-weight: 700;">
+                                            Chi Tiết Đơn Hàng
+                                        </h3>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 20px;">
+                                        <!-- Booking Code -->
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
+                                            <tr>
+                                                <td style="color: #4a4a4a; font-size: 14px; width: 40%;">Mã đơn hàng:</td>
+                                                <td style="color: #006ce4; font-size: 15px; font-weight: 700; text-align: right;">
+                                                    <span th:text="${bookingCode}">CODE</span>
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Booking Type -->
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 12px;">
+                                            <tr>
+                                                <td style="color: #4a4a4a; font-size: 14px; width: 40%;">Loại dịch vụ:</td>
+                                                <td th:text="${bookingType}" style="color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">
+                                                    Dịch vụ
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Created At -->
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom: 16px;">
+                                            <tr>
+                                                <td style="color: #4a4a4a; font-size: 14px; width: 40%;">Ngày đặt:</td>
+                                                <td th:text="${createdAt}" style="color: #1a1a1a; font-size: 14px; font-weight: 600; text-align: right;">
+                                                    Ngày giờ
+                                                </td>
+                                            </tr>
+                                        </table>
+
+                                        <!-- Total Price -->
+                                        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top: 1px dashed #cccccc; padding-top: 16px;">
+                                            <tr>
+                                                <td style="color: #1a1a1a; font-size: 16px; font-weight: 700; padding-top: 16px;">Tổng thanh toán:</td>
+                                                <td th:text="${totalPrice}" style="color: #d43b3b; font-size: 20px; font-weight: 700; text-align: right; padding-top: 16px;">
+                                                    0 ₫
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Info Note -->
+                    <tr>
+                        <td style="padding: 0 40px 30px 40px;">
+                            <p style="color: #4a4a4a; margin: 0; font-size: 13px; line-height: 1.5; background-color: #fbfbfb; padding: 12px; border: 1px solid #e5e5e5; border-radius: 4px;">
+                                <strong>Lưu ý:</strong> Vui lòng giữ lại mã đơn hàng để tra cứu tại website hoặc liên hệ hỗ trợ.
+                                Cảm ơn bạn đã lựa chọn Booking!
+                            </p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style="padding: 20px 40px; text-align: center; background-color: #00224f;">
+                            <h4 style="color: #ffffff; margin: 0 0 5px 0; font-size: 16px;">Booking</h4>
+                            <p style="color: #a3b8cc; margin: 0 0 10px 0; font-size: 13px;">
+                                Trải nghiệm du lịch dễ dàng và thuận tiện
+                            </p>
+                            <p style="color: #a3b8cc; margin: 0; font-size: 12px;">
+                                Email: <a href="mailto:danghainguyen212@gmail.com" style="color: #ffb700; text-decoration: none;">danghainguyen212@gmail.com</a>
+                            </p>
+                        </td>
+                    </tr>
+
+                </table>
+            </td>
+        </tr>
+    </table>
+
+</body>
+</html>

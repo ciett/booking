@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.entity.Booking;
 import com.example.demo.entity.BookingStatus;
 import com.example.demo.repository.BookingRepository;
+import com.example.demo.service.EmailService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,9 @@ public class PayOSController {
 
     @Autowired
     private BookingRepository bookingRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     private PayOS payOS;
 
@@ -124,6 +128,15 @@ public class PayOSController {
                 booking.setStatus(BookingStatus.CONFIRMED);
                 bookingRepository.save(booking);
                 System.out.println("Webhook: Da tu dong xac nhan don hang " + booking.getBookingCode() + " thanh cong!");
+
+                // Gửi email thông báo thanh toán thành công
+                if (booking.getUser() != null && booking.getUser().getEmail() != null) {
+                    emailService.sendPaymentSuccess(
+                        booking,
+                        booking.getUser().getEmail(),
+                        booking.getUser().getFullName()
+                    );
+                }
             }
 
             return ResponseEntity.ok(Map.of("success", true));
@@ -133,3 +146,4 @@ public class PayOSController {
         }
     }
 }
+
