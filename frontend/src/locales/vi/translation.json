@@ -303,7 +303,11 @@
     "noDescription": "Không có mô tả cho khách sạn này."
   },
   "hotelCard": {
+    "superb": "Tuyệt hảo",
     "excellent": "Tuyệt vời",
+    "veryGood": "Rất tốt",
+    "good": "Tốt",
+    "acceptable": "Đạt yêu cầu",
     "reviews": "{{count}} đánh giá",
     "viewOnMap": "Xem trên bản đồ",
     "studioApartment": "Căn hộ Studio",

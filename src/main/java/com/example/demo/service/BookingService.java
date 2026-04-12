@@ -48,4 +48,8 @@ public class BookingService {
     public void cancelBooking(Long id) {
         updateStatus(id, com.example.demo.entity.BookingStatus.CANCELLED);
     }
+
+    public Booking saveBooking(Booking booking) {
+        return bookingRepository.save(booking);
+    }
 }

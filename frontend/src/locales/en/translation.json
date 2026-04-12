@@ -303,7 +303,11 @@
     "noDescription": "No description available."
   },
   "hotelCard": {
+    "superb": "Superb",
     "excellent": "Excellent",
+    "veryGood": "Very Good",
+    "good": "Good",
+    "acceptable": "Acceptable",
     "reviews": "{{count}} reviews",
     "viewOnMap": "View on map",
     "studioApartment": "Studio Apartment",

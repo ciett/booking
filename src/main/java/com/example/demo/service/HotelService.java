@@ -60,7 +60,17 @@ public class HotelService {
     }
 
     public Hotel saveHotel(Hotel hotel) {
-        return hotelRepository.save(hotel);
+        Hotel savedHotel = hotelRepository.save(hotel);
+        if (hotel.getPrice() != null && hotel.getPrice() > 0) {
+            Room room = new Room();
+            room.setHotel(savedHotel);
+            room.setRoomType("Phòng Tiêu Chuẩn");
+            room.setPricePerNight(new java.math.BigDecimal(hotel.getPrice()));
+            room.setMaxAdults(2);
+            room.setMaxChildren(1);
+            roomRepository.save(room);
+        }
+        return savedHotel;
     }
 
     public void deleteHotel(Long id) {

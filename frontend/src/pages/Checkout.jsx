@@ -35,7 +35,16 @@ const Checkout = () => {
      if (statusParam === 'cancel') {
          message.warning('Thanh toán đã bị hủy.');
      }
-  }, [statusParam]);
+     // Khi PayOS redirect về với status=success, tự động xác nhận booking trong DB
+     if (statusParam === 'success') {
+         const code = searchParams.get('bookingCode');
+         if (code) {
+             api.patch(`/bookings/confirm-by-code/${code}`)
+                 .then(() => console.log('Booking đã được xác nhận tự động.'))
+                 .catch(err => console.warn('Không thể tự xác nhận booking:', err));
+         }
+     }
+  }, [statusParam, searchParams]);
 
   useEffect(() => {
     if (!showQrModal) return;
@@ -298,6 +307,12 @@ const Checkout = () => {
             className="bg-[#003b95] text-white px-8 py-3 rounded-lg font-bold hover:bg-[#002d73] transition-all w-full flex items-center justify-center gap-2"
           >
             <i className="fa-solid fa-home"></i> {t('checkout.backHome', 'Trở về trang chủ')}
+          </button>
+          <button
+            onClick={() => navigate('/account', { state: { tab: 'bookings' } })}
+            className="mt-3 border-2 border-[#003b95] text-[#003b95] px-8 py-3 rounded-lg font-bold hover:bg-blue-50 transition-all w-full flex items-center justify-center gap-2"
+          >
+            <i className="fa-solid fa-clock-rotate-left"></i> Xem lịch sử đặt chỗ
           </button>
         </div>
       </div>

@@ -15,9 +15,15 @@ const PropertySubmission = () => {
     const [isSuccess, setIsSuccess] = useState(false);
     const navigate = useNavigate();
 
+    const stepFields = [
+        ['propertyType', 'name', 'rating'],
+        ['city', 'address'],
+        ['imageUrl', 'description', 'price']
+    ];
+
     const onNext = async () => {
         try {
-            await form.validateFields();
+            await form.validateFields(stepFields[currentStep]);
             setCurrentStep(currentStep + 1);
         } catch (error) {
             message.error("Vui lòng điền đầy đủ các thông tin bắt buộc!");
@@ -40,7 +46,8 @@ const PropertySubmission = () => {
                 city: values.city,
                 address: values.address,
                 description: values.description || `Chào mừng bạn đến với ${values.name}. Đây là chỗ nghỉ tuyệt vời tại ${values.city}.`,
-                rating: Math.min(9.9, Number(values.rating ? (values.rating * 2) : 10)), // Giới hạn 9.9 để tránh lỗi database precision
+                rating: Number(values.rating || 5), // Gửi trực tiếp chuẩn thang 5 về CSDL
+                price: values.price || 0,
                 imageUrl: values.imageUrl || "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=500"
             };
 
@@ -121,6 +128,9 @@ const PropertySubmission = () => {
             content: (
                 <div className="space-y-4 animate-fade-in-up">
                     <h2 className="text-2xl font-bold mb-4 text-[#006ce4]">Hình ảnh & Thông tin thêm</h2>
+                    <Form.Item name="price" label="Giá cơ bản 1 đêm (VND)" rules={[{ required: true, message: 'Vui lòng nhập giá tối thiểu!' }]}>
+                        <InputNumber size="large" min={0} step={50000} style={{ width: '100%' }} placeholder="Ví dụ: 800000" formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} parser={value => value.replace(/\$\s?|(,*)/g, '')}/>
+                    </Form.Item>
                     <Form.Item name="imageUrl" label="Đường dẫn Ảnh (URL)" tooltip="Để trống hệ thống sẽ dùng ảnh mặc định">
                         <Input size="large" placeholder="https://example.com/image.jpg" />
                     </Form.Item>
@@ -149,7 +159,11 @@ const PropertySubmission = () => {
                     initialValues={{ rating: 5 }}
                 >
                     <div className="min-h-[250px] p-2">
-                        {steps[currentStep].content}
+                        {steps.map((step, index) => (
+                            <div key={index} style={{ display: currentStep === index ? 'block' : 'none' }}>
+                                {step.content}
+                            </div>
+                        ))}
                     </div>
                 </Form>
 

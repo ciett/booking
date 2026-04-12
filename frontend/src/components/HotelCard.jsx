@@ -15,6 +15,18 @@ const HotelCard = ({ hotel, checkIn, checkOut, adults = 2, children = 0, rooms =
     const basePrice = Number(String(hotel.price).replace(/[^0-9]/g, '')) || 0;
     const totalPrice = basePrice * nights * rooms;
     const formattedTotal = totalPrice.toLocaleString('vi-VN');
+
+    // Chuyển đổi điểm số thành nhận xét
+    const getRatingTextKey = (rating) => {
+        const numRating = parseFloat(rating) || 0;
+        if (numRating >= 4.5) return 'hotelCard.superb';
+        if (numRating >= 4.0) return 'hotelCard.excellent';
+        if (numRating >= 3.5) return 'hotelCard.veryGood';
+        if (numRating >= 3.0) return 'hotelCard.good';
+        return 'hotelCard.acceptable';
+    };
+    const ratingText = t(getRatingTextKey(hotel.rating));
+
     return (
         <div className="border border-gray-300 rounded-lg p-4 flex flex-col md:flex-row gap-4 hover:shadow-md transition-shadow bg-white">
             {/* Ảnh bên trái */}
@@ -35,7 +47,7 @@ const HotelCard = ({ hotel, checkIn, checkOut, adults = 2, children = 0, rooms =
                         {/* Ô điểm số xanh đậm */}
                         <div className="flex items-center gap-2">
                             <div className="text-right">
-                                <p className="font-bold text-sm leading-tight">{t('hotelCard.excellent')}</p>
+                                <p className="font-bold text-sm leading-tight">{ratingText}</p>
                                 <p className="text-[11px] text-gray-500">{t('hotelCard.reviews', { count: hotel.reviews })}</p>
                             </div>
                             <div className="bg-[#003580] text-white w-8 h-8 flex items-center justify-center rounded-t-md rounded-br-md font-bold">
@@ -72,7 +84,7 @@ const HotelCard = ({ hotel, checkIn, checkOut, adults = 2, children = 0, rooms =
                             <div className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <div className="bg-[#003580] text-white px-2 py-1 rounded-sm font-bold">{hotel.rating}</div>
-                                    <span className="font-bold">{t('hotelCard.excellent')} • {t('hotelCard.reviews', { count: hotel.reviews })}</span>
+                                    <span className="font-bold">{ratingText} • {t('hotelCard.reviews', { count: hotel.reviews })}</span>
                                 </div>
                                 <div className="rounded-lg overflow-hidden h-48">
                                     <img src={hotel.image} className="w-full h-full object-cover" alt="hotel detail" />

@@ -23,6 +23,7 @@ public class Hotel {
     private String imageUrl;
 
     @Transient
+    @com.fasterxml.jackson.annotation.JsonProperty
     private Integer price;
 
     @Transient

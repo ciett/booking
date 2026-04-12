@@ -71,7 +71,7 @@ const SearchResults = () => {
                 const mappedHotels = response.data.map(h => ({
                     id: h.id,
                     name: h.name,
-                    rating: h.rating ? (h.rating / 2).toFixed(1) : "0.0", // Quy đổi từ thang 10 sang thang 5
+                    rating: h.rating ? Number(h.rating).toFixed(1) : "0.0", // Dữ liệu backend đang là thang 5 nên lấy gốc
                     reviews: h.reviewCount || 0,
                     price: h.price ? h.price.toLocaleString('vi-VN') : t('searchResults.contact'),
                     location: h.address || h.city,

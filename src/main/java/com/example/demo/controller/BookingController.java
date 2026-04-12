@@ -36,4 +36,15 @@ public class BookingController {
     public void cancelBooking(@PathVariable Long id) {
         bookingService.cancelBooking(id);
     }
+
+    @PatchMapping("/confirm-by-code/{code}")
+    public org.springframework.http.ResponseEntity<?> confirmByCode(@PathVariable String code) {
+        return bookingService.getBookingByCode(code)
+            .map(booking -> {
+                booking.setStatus(com.example.demo.entity.BookingStatus.CONFIRMED);
+                bookingService.saveBooking(booking);
+                return org.springframework.http.ResponseEntity.ok(booking);
+            })
+            .orElse(org.springframework.http.ResponseEntity.notFound().build());
+    }
 }
