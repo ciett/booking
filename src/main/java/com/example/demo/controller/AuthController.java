@@ -69,4 +69,39 @@ public class AuthController {
                     .body(new AuthResponse(null, null, request.getEmail(), null, null, "Sai email hoặc mật khẩu!"));
         }
     }
+
+    @PostMapping("/social-login")
+    public ResponseEntity<AuthResponse> socialLogin(@RequestBody com.example.demo.dto.SocialLoginRequest request) {
+        try {
+            String email = request.getEmail();
+            String fullName = request.getName();
+
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new AuthResponse(null, null, null, null, null, "Không lấy được email từ provider!"));
+            }
+
+            // Find or create user
+            java.util.Optional<User> userOpt = userRepository.findByEmail(email);
+            User user;
+            if (userOpt.isPresent()) {
+                user = userOpt.get();
+            } else {
+                user = new User();
+                user.setEmail(email);
+                user.setFullName(fullName != null ? fullName : email);
+                user.setRole(UserRole.CUSTOMER);
+                user.setPassword(passwordEncoder.encode(java.util.UUID.randomUUID().toString())); // Random password
+                user = userRepository.save(user);
+            }
+
+            CustomUserDetails userDetails = new CustomUserDetails(user);
+            String jwt = jwtUtil.generateToken(userDetails);
+
+            return ResponseEntity.ok(new AuthResponse(jwt, user.getId(), user.getEmail(), user.getFullName(), user.getRole().name(), "Đăng nhập thành công!"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new AuthResponse(null, null, null, null, null, "Lỗi server: " + e.getMessage()));
+        }
+    }
 }

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DatePicker, Select, Radio, ConfigProvider, message } from 'antd';
-import { Button } from '@mui/material';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
@@ -11,9 +10,11 @@ import { useTranslation } from 'react-i18next';
 
 const { RangePicker } = DatePicker;
 
-// Hàm chặn chọn ngày trong quá khứ (Dùng logic bạn vừa gửi)
+// Constants cho bảng màu Booking.com
+const NAVY = '#003580';
+const CB = '#006ce4';
+
 const disabledDate = (current) => {
-  // Không cho phép chọn những ngày trước ngày hôm nay
   return current && current < dayjs().startOf('day');
 };
 
@@ -41,13 +42,17 @@ const Flights = () => {
   }, []);
 
   const handleSearch = async () => {
-    if (!departureCode || !arrivalCode || !departureDate) {
+    if (!departureCode || !arrivalCode || !departureDate || departureDate.length === 0) {
+      if (tripType === 'roundtrip' && (!departureDate || departureDate.length !== 2)) {
+          message.warning("Vui lòng chọn ngày đi và ngày về");
+          return;
+      }
       message.warning("Vui lòng chọn đầy đủ thông tin: Điểm đi, Điểm đến và Ngày đi");
       return;
     }
     setLoading(true);
     try {
-      // 1. Tìm chuyến đi
+      // Tìm chuyến đi
       const outStart = departureDate[0].startOf('day').format('YYYY-MM-DDTHH:mm:ss');
       const outEnd = departureDate[0].endOf('day').format('YYYY-MM-DDTHH:mm:ss');
       
@@ -69,19 +74,11 @@ const Flights = () => {
           message.warning("Không tìm thấy chuyến bay chiều về trong ngày bạn chọn!");
           setResults([]);
         } else {
-          // Lấy chuyến về rẻ nhất để gép chung
           const cheapestReturn = retFlights.reduce((prev, curr) => (prev.price < curr.price ? prev : curr), retFlights[0]);
-          
-          const combined = outFlights.map(out => {
-            return {
-              ...out,
-              returnFlight: cheapestReturn
-            };
-          });
+          const combined = outFlights.map(out => ({ ...out, returnFlight: cheapestReturn }));
           setResults(combined);
         }
       } else {
-        // Một chiều
         setResults(outFlights);
       }
     } catch (error) {
@@ -95,256 +92,230 @@ const Flights = () => {
   return (
     <ConfigProvider theme={{ 
       token: { 
-        colorPrimary: '#003b95',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif"
+        colorPrimary: CB,
+        fontFamily: "'Inter', sans-serif"
       } 
     }}>
-      <div className="w-full flex flex-col items-center bg-gray-50 min-h-screen">
+      <div className="w-full flex flex-col items-center bg-[#f7f8fa] min-h-screen pb-20 font-sans">
 
-        {/* Banner */}
-        <div className="bg-linear-to-br from-booking-blue via-blue-800 to-indigo-900 text-white relative w-full pt-12 pb-24 px-4 sm:px-6 lg:px-8 shadow-inner overflow-hidden">
-            <div className="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-white via-transparent to-transparent"></div>
-            <div className="max-w-6xl mx-auto relative z-10 animate-fade-in-up">
-                <h1 className="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight drop-shadow-md">{t('flights.heroTitle')}</h1>
-                <p className="text-xl md:text-2xl text-blue-100 font-medium drop-shadow-sm">{t('flights.heroSubtitle')}</p>
+        {/* HERO Banner */}
+        <div style={{ background: NAVY, paddingBottom: '90px', paddingTop: '80px' }} className="w-full px-4 relative">
+            <div className="max-w-6xl mx-auto relative z-10 text-center animate-fade-in-up">
+                <h1 className="text-4xl md:text-5xl font-black mb-4 text-white tracking-tight leading-tight">
+                    {t('flights.heroTitle')}
+                </h1>
+                <p className="text-xl text-gray-400 font-medium max-w-2xl mx-auto">
+                    {t('flights.heroSubtitle')}
+                </p>
             </div>
         </div>
 
-        {/* Search Bar */}
-        <div className="max-w-6xl mx-auto px-4 w-full relative z-20 -mt-12">
-          <div className="bg-yellow-400 p-1.5 md:p-2 rounded-2xl shadow-xl transition-shadow hover:shadow-2xl">
-            <div className="bg-white rounded-xl overflow-hidden p-4 shadow-inner">
-
-            <Radio.Group value={tripType} onChange={(e) => setTripType(e.target.value)} buttonStyle="solid">
-              <Radio.Button value="roundtrip">{t('flights.roundtrip')}</Radio.Button>
-              <Radio.Button value="oneway">{t('flights.oneway')}</Radio.Button>
-            </Radio.Group>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
-              {/* Điểm đi */}
-              <div className="md:col-span-3 border rounded-lg p-2 hover:border-booking-blue bg-white flex items-center gap-2">
-                <FlightTakeoffIcon className="text-gray-400" />
-                <div className="flex flex-col w-full">
-                  <span className="text-[10px] font-bold text-gray-400 uppercase font-sans line-clamp-1">{t('flights.from')}</span>
-                  <Select
-                    showSearch
-                    placeholder={t('flights.originPlaceholder')}
-                    variant="borderless"
-                    className="w-full text-sm"
-                    onChange={(val) => setDepartureCode(val)}
-                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-                    options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
-                </div>
-              </div>
-
-              {/* Điểm đến */}
-              <div className="md:col-span-3 border rounded-lg p-2 hover:border-booking-blue bg-white flex items-center gap-2">
-                <FlightLandIcon className="text-gray-400" />
-                <div className="flex flex-col w-full">
-                  <span className="text-[10px] font-bold text-gray-500 uppercase font-sans">{t('flights.to')}</span>
-                  <Select
-                    showSearch
-                    placeholder={t('flights.destPlaceholder')}
-                    variant="borderless"
-                    className="w-full"
-                    onChange={(val) => setArrivalCode(val)}
-                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-                    options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
-                </div>
-              </div>
-
-              {/* DATE SELECTION */}
-              <div className="md:col-span-4 border rounded-lg p-1.5 hover:border-booking-blue bg-white">
-                <span className="text-[10px] font-bold text-gray-400 uppercase px-3 font-sans line-clamp-1">{t('flights.dateRange')}</span>
-                <RangePicker
-                  disabledDate={disabledDate} // Áp dụng logic chặn ngày quá khứ
-                  variant="borderless"
-                  className="w-full text-sm"
-                  format="DD/MM/YYYY"
-                  placeholder={[t('flights.dateStart'), t('flights.dateEnd')]}
-                  onChange={(dates) => setDepartureDate(dates)}
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <Button
-                  variant="contained"
-                  fullWidth
-                  className="h-full bg-booking-blue hover:bg-booking-dark"
-                  onClick={handleSearch}
-                  disabled={loading}
-                  sx={{ borderRadius: '8px', fontSize: '15px', fontWeight: 'bold', height: '100%', textTransform: 'none', padding: '10px 0' }}>
-                  {loading ? t('flights.searching') : t('flights.search')}
-                </Button>
-              </div>
+        {/* SEARCH BOX */}
+        <div className="max-w-[1140px] mx-auto px-4 w-full relative z-20 -mt-8">
+          <div className="bg-white rounded-[24px] p-2 shadow-2xl border border-gray-100">
+            <div className="px-5 py-2 border-b border-gray-50 flex items-center">
+                <Radio.Group value={tripType} onChange={(e) => setTripType(e.target.value)} buttonStyle="solid">
+                    <Radio.Button value="roundtrip" className="font-bold">{t('flights.roundtrip')}</Radio.Button>
+                    <Radio.Button value="oneway" className="font-bold">{t('flights.oneway')}</Radio.Button>
+                </Radio.Group>
             </div>
+            
+            <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                {/* Điểm đi */}
+                <div className="flex items-center px-5 py-4 flex-1 min-w-0 gap-3 hover:bg-gray-50 transition-colors first:rounded-bl-[22px]">
+                    <FlightTakeoffIcon className="text-gray-300 shrink-0" />
+                    <Select
+                        showSearch
+                        placeholder={t('flights.originPlaceholder') || "T.phố khởi hành"}
+                        variant="borderless"
+                        className="w-full font-bold text-lg min-w-0"
+                        onChange={(val) => setDepartureCode(val)}
+                        filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                        options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
+                </div>
+
+                {/* Điểm đến */}
+                <div className="flex items-center px-5 py-4 flex-1 min-w-0 gap-3 hover:bg-gray-50 transition-colors">
+                    <FlightLandIcon className="text-gray-300 shrink-0" />
+                    <Select
+                        showSearch
+                        placeholder={t('flights.destPlaceholder') || "T.phố hạ cánh"}
+                        variant="borderless"
+                        className="w-full font-bold text-lg min-w-0"
+                        onChange={(val) => setArrivalCode(val)}
+                        filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                        options={airports.map(a => ({ value: a.code, label: `${a.city} (${a.code})` }))} />
+                </div>
+
+                {/* DATE */}
+                <div className="flex items-center px-4 py-3 flex-[1.5] min-w-[250px] lg:min-w-0 gap-3 hover:bg-gray-50 transition-colors">
+                    <i className="fa-regular fa-calendar text-gray-300 text-lg shrink-0"></i>
+                    <ConfigProvider theme={{ token: { colorPrimary: CB, borderRadius: 12 } }}>
+                      <RangePicker
+                          disabledDate={disabledDate} 
+                          variant="borderless"
+                          className="w-full font-medium"
+                          format="DD/MM/YYYY"
+                          placeholder={[t('home.searchDateCheckIn') || 'Ngày đi', t('home.searchDateCheckOut') || 'Ngày về']}
+                          onChange={(dates) => setDepartureDate(dates)}
+                          separator={<i className="fa-solid fa-arrow-right text-gray-300 text-xs shrink-0"></i>}
+                      />
+                    </ConfigProvider>
+                </div>
+
+                {/* CTA */}
+                <div className="shrink-0 p-2">
+                    <button
+                        onClick={handleSearch}
+                        disabled={loading}
+                        className="h-full min-h-[56px] px-8 text-white font-black text-lg transition-all active:scale-95 flex items-center justify-center rounded-[18px] w-full"
+                        style={{ background: loading ? '#94a3b8' : CB }}
+                        onMouseOver={e => !loading && (e.currentTarget.style.background = '#578bfa')}
+                        onMouseOut={e => !loading && (e.currentTarget.style.background = CB)}
+                    >
+                        {loading ? <i className="fa-solid fa-spinner fa-spin"></i> : <>{t('home.searchButton') || 'Tìm kiếm'}</>}
+                    </button>
+                </div>
             </div>
+
           </div>
         </div>
 
-
-        {/* Lợi ích khi đặt vé */}
+        {/* Lợi ích */}
         {results.length === 0 && (
-          <div className="section-container mt-12 mb-20 animate-fade-in-up">
-            <h2 className="text-2xl font-bold mb-8 text-gray-900">{t('flights.whyBookWithUs')}</h2>
+          <div className="max-w-6xl mx-auto px-4 mt-20 w-full animate-fade-in-up">
+            <h2 className="text-3xl font-black mb-8 text-[#0a0b0d] text-center">{t('flights.whyBookWithUs')}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              <div className="flex flex-col items-start p-6 bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all">
-                <div className="w-12 h-12 bg-blue-50 text-booking-blue rounded-full flex items-center justify-center text-xl mb-4">
-                  <i className="fa-solid fa-search"></i>
+              {[
+                  { icon: 'fa-magnifying-glass', title: t('flights.hugeSelection'), desc: t('flights.hugeSelectionDesc') },
+                  { icon: 'fa-tags', title: t('flights.noHiddenFees'), desc: t('flights.noHiddenFeesDesc') },
+                  { icon: 'fa-calendar-check', title: t('flights.moreFlexibility'), desc: t('flights.moreFlexibilityDesc') }
+              ].map((feature, idx) => (
+                <div key={idx} className="flex flex-col items-center text-center bg-white p-8 rounded-[24px] shadow-sm border border-gray-100 hover:shadow-xl transition-all group">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 text-2xl group-hover:scale-110 transition-transform" style={{ background: CB + '12', color: CB }}>
+                    <i className={`fa-solid ${feature.icon}`}></i>
+                  </div>
+                  <h3 className="font-black text-xl mb-3 text-[#0a0b0d]">{feature.title}</h3>
+                  <p className="text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
                 </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{t('flights.hugeSelection')}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{t('flights.hugeSelectionDesc')}</p>
-              </div>
-              <div className="flex flex-col items-start p-6 bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all">
-                <div className="w-12 h-12 bg-blue-50 text-booking-blue rounded-full flex items-center justify-center text-xl mb-4">
-                  <i className="fa-solid fa-tags"></i>
-                </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{t('flights.noHiddenFees')}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{t('flights.noHiddenFeesDesc')}</p>
-              </div>
-              <div className="flex flex-col items-start p-6 bg-white rounded-xl border border-gray-200 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-lg transition-all">
-                <div className="w-12 h-12 bg-blue-50 text-booking-blue rounded-full flex items-center justify-center text-xl mb-4">
-                  <i className="fa-solid fa-calendar-check"></i>
-                </div>
-                <h3 className="font-bold text-lg mb-2 text-gray-900">{t('flights.moreFlexibility')}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{t('flights.moreFlexibilityDesc')}</p>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
-        {/* List vé mẫu... */}
+        {/* List vé */}
         {results.length > 0 && (
-          <div className="section-container mt-6 pb-12">
-            <h2 className="text-2xl font-bold mb-4">{t('flights.searchResults')}</h2>
-            <div className="flex flex-col gap-4">
+          <div className="max-w-6xl mx-auto px-4 mt-12 w-full">
+            <h2 className="text-2xl font-black mb-6 text-[#0a0b0d]">{t('flights.searchResults')}</h2>
+            <div className="flex flex-col gap-5">
               {results.map((flight) => {
                 const isRound = tripType === 'roundtrip';
                 const retPrice = flight.returnFlight ? flight.returnFlight.price : 0;
-                
                 const ecoTotal = isRound ? (flight.price + retPrice + 200000) : flight.price;
                 const bizTotal = isRound ? ((flight.price * 2.5) + (retPrice * 2.5) + 200000) : (flight.price * 2.5);
-
                 const tripLabelEco = (isRound ? ' (Khứ hồi)' : ' (Một chiều)') + ' - Phổ thông';
                 const tripLabelBiz = (isRound ? ' (Khứ hồi)' : ' (Một chiều)') + ' - Thương gia';
 
                 return (
-                <div key={flight.id} className="result-card flex flex-col md:flex-row gap-6 justify-between items-center p-6 bg-white rounded-xl border hover:shadow-lg transition-shadow">
-                  {/* Cột 1: Thông tin hãng bay */}
-                  <div className="flex flex-col w-full md:w-1/4 shrink-0">
-                    <span className="font-bold text-xl text-booking-blue truncate">{flight.airline}</span>
-                    <span className="text-sm text-gray-500 mt-1">{t('flights.flightNumber')}: {flight.flightNumber}</span>
-                  </div>
-                  
-                  {/* Cột 2: Thời gian bay - Giữa */}
-                  <div className="flex items-center justify-center gap-4 md:gap-8 w-full flex-1 text-center">
-                    <div className="flex flex-col">
-                      <div className="text-2xl font-extrabold text-gray-900">{dayjs(flight.departureTime).format('HH:mm')}</div>
-                      <div className="text-gray-500 font-medium">{flight.departureAirport?.code}</div>
+                <div key={flight.id} className="bg-white rounded-[24px] border border-gray-100 overflow-hidden hover:shadow-2xl transition-all group">
+                  <div className="p-6 flex flex-col md:flex-row gap-6 justify-between items-center">
+                    <div className="flex flex-col w-full md:w-1/4 shrink-0">
+                        <div className="flex items-center gap-3 mb-1">
+                            <div className="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center">
+                                <i className="fa-solid fa-plane-departure text-[#006ce4]"></i>
+                            </div>
+                            <span className="font-black text-xl text-[#0a0b0d] truncate">{flight.airline}</span>
+                        </div>
+                        <span className="text-sm text-gray-400 font-bold ml-13">{t('flights.flightNumber')}: {flight.flightNumber}</span>
                     </div>
                     
-                    <div className="flex flex-col items-center justify-center w-full max-w-[120px]">
-                      <span className="text-[10px] text-gray-400 uppercase tracking-widest mb-1 font-semibold text-center">Bay thẳng</span>
-                      <div className="w-16 md:w-full border-b-2 border-gray-300 relative flex items-center justify-center mb-5">
-                          <i className="fa-solid fa-plane absolute bg-white px-1 text-gray-400 text-sm"></i>
-                      </div>
+                    <div className="flex items-center justify-center gap-4 md:gap-8 w-full flex-1 text-center">
+                        <div className="flex flex-col">
+                            <div className="text-3xl font-black text-[#0a0b0d]">{dayjs(flight.departureTime).format('HH:mm')}</div>
+                            <div className="text-gray-400 font-bold text-sm tracking-widest">{flight.departureAirport?.code}</div>
+                        </div>
+                        <div className="flex flex-col items-center justify-center w-full max-w-[150px]">
+                            <span className="text-[11px] text-[#006ce4] font-black uppercase tracking-widest mb-1">Bay thẳng</span>
+                            <div className="w-full border-b-2 border-dashed border-gray-200 relative flex items-center justify-center mb-4">
+                                <i className="fa-solid fa-plane absolute bg-white px-2 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
+                        <div className="flex flex-col">
+                            <div className="text-3xl font-black text-[#0a0b0d]">{dayjs(flight.arrivalTime).format('HH:mm')}</div>
+                            <div className="text-gray-400 font-bold text-sm tracking-widest">{flight.arrivalAirport?.code}</div>
+                        </div>
                     </div>
 
-                    <div className="flex flex-col">
-                      <div className="text-2xl font-extrabold text-gray-900">{dayjs(flight.arrivalTime).format('HH:mm')}</div>
-                      <div className="text-gray-500 font-medium">{flight.arrivalAirport?.code}</div>
+                    <div className="flex flex-col items-center md:items-end w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-8">
+                        <span className="text-xs text-gray-400 mb-1 font-black uppercase tracking-widest">Giá mỗi khách</span>
+                        <span className="text-3xl font-black text-[#0a0b0d] mb-3">{ecoTotal.toLocaleString('vi-VN')} <span className="text-sm">VND</span></span>
+                        <DetailOverlay 
+                        trigger={
+                            <button className="px-10 py-3 rounded-xl text-white font-black text-base transition-all active:scale-95 shadow-md"
+                                    style={{ background: CB }}
+                                    onMouseOver={e => e.currentTarget.style.background = '#003b95'}
+                                    onMouseOut={e => e.currentTarget.style.background = CB}>
+                                {t('flights.selectFlight')}
+                            </button>
+                        }
+                        title={flight.airline}
+                        description={`Hành trình ${flight.flightNumber}`}
+                        content={
+                            <div className="space-y-4">
+                                <div className="bg-[#006ce4] bg-opacity-5 p-4 rounded-2xl border border-blue-100 flex justify-between items-center">
+                                    <span className="font-black text-[#003580]">{flight.airline} {isRound ? 'Khứ hồi' : 'Một chiều'}</span>
+                                    <span className="bg-white px-3 py-1 rounded-lg text-sm font-black shadow-sm">#{flight.flightNumber}</span>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Khởi hành</p>
+                                        <p className="font-black text-2xl text-[#0a0b0d] mb-1">{dayjs(flight.departureTime).format('HH:mm')}</p>
+                                        <p className="font-bold text-sm text-gray-700">{flight.departureAirport?.city} ({flight.departureAirport?.code})</p>
+                                    </div>
+                                    <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Hạ cánh</p>
+                                        <p className="font-black text-2xl text-[#0a0b0d] mb-1">{dayjs(flight.arrivalTime).format('HH:mm')}</p>
+                                        <p className="font-bold text-sm text-gray-700">{flight.arrivalAirport?.city} ({flight.arrivalAirport?.code})</p>
+                                    </div>
+                                </div>
+                                {flight.returnFlight && (
+                                    <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                                        <p className="font-black text-[#006ce4] mb-3 flex items-center gap-2">
+                                            <i className="fa-solid fa-plane fa-flip-horizontal"></i> Chuyến về: {flight.returnFlight.airline}
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="bg-blue-50 p-3 rounded-2xl">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">{dayjs(flight.returnFlight.departureTime).format('HH:mm')}</p>
+                                                <p className="font-bold text-xs">{flight.returnFlight.departureAirport?.code}</p>
+                                            </div>
+                                            <div className="bg-green-50 p-3 rounded-2xl">
+                                                <p className="text-[10px] font-black text-gray-400 uppercase mb-1">{dayjs(flight.returnFlight.arrivalTime).format('HH:mm')}</p>
+                                                <p className="font-bold text-xs">{flight.returnFlight.arrivalAirport?.code}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        }
+                        footer={
+                            <div className="flex flex-col gap-3 w-full">
+                                <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                                    <div>
+                                        <p className="font-black text-[#0a0b0d]">Hạng Phổ thông</p>
+                                        <p className="text-xs text-gray-400 font-bold">7kg hành lý xách tay</p>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-xl font-black text-[#0a0b0d]">{ecoTotal.toLocaleString('vi-VN')} đ</span>
+                                        <button className="bg-[#006ce4] text-white px-6 py-2 rounded-xl font-black text-sm active:scale-95"
+                                            onClick={() => navigate(`/checkout?type=flight&name=${encodeURIComponent(flight.airline + ' ' + flight.flightNumber + tripLabelEco)}&price=${ecoTotal}&details=${encodeURIComponent(JSON.stringify({ [t('flights.departure')]: flight.departureAirport?.city, [t('flights.arrival')]: flight.arrivalAirport?.city }))}`)}>
+                                            CHỌN
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        />
                     </div>
-                  </div>
-
-                  {/* Cột 3: Giá và Nút bấm */}
-                  <div className="flex flex-col items-center md:items-end w-full md:w-auto shrink-0">
-                    <span className="text-sm text-gray-500 mb-1">Từ</span>
-                    <span className="text-2xl font-extrabold text-red-600 mb-3 whitespace-nowrap">{ecoTotal.toLocaleString('vi-VN')} VND</span>
-                    <DetailOverlay 
-                      trigger={<Button variant="contained" sx={{ backgroundColor: '#006ce4', fontWeight: 'bold' }}>{t('flights.selectFlight')}</Button>}
-                      title={`${t('flights.flightDetails')} ${flight.flightNumber}`}
-                      description={`${t('flights.journeyFrom')} ${flight.departureAirport?.city} ${t('flights.journeyTo')} ${flight.arrivalAirport?.city}`}
-                      content={
-                        <div className="space-y-4">
-                          <div className="flex justify-between items-center bg-blue-50 p-3 rounded">
-                             <span className="font-bold text-booking-blue">{flight.airline} {isRound ? '(Khứ hồi)' : '(Một chiều)'}</span>
-                            <span className="text-sm font-medium">#{flight.flightNumber}</span>
-                          </div>
-                          <div className="grid grid-cols-2 gap-4">
-                            <div className="border-l-2 border-blue-200 pl-3">
-                              <p className="text-xs text-gray-400">{t('flights.departure')}</p>
-                              <p className="font-bold text-lg">{dayjs(flight.departureTime).format('HH:mm')}</p>
-                              <p className="text-sm">{flight.departureAirport?.name} ({flight.departureAirport?.code})</p>
-                              <p className="text-xs text-gray-500">{dayjs(flight.departureTime).format('DD/MM/YYYY')}</p>
-                            </div>
-                            <div className="border-l-2 border-green-200 pl-3">
-                              <p className="text-xs text-gray-400">{t('flights.arrival')}</p>
-                              <p className="font-bold text-lg">{dayjs(flight.arrivalTime).format('HH:mm')}</p>
-                              <p className="text-sm">{flight.arrivalAirport?.name} ({flight.arrivalAirport?.code})</p>
-                              <p className="text-xs text-gray-500">{dayjs(flight.arrivalTime).format('DD/MM/YYYY')}</p>
-                            </div>
-                          </div>
-                          {flight.returnFlight && (
-                            <div className="mt-4 border-t pt-4">
-                              <p className="font-bold text-booking-blue mb-2">Chuyến về: {flight.returnFlight.airline} #{flight.returnFlight.flightNumber}</p>
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="border-l-2 border-blue-200 pl-3">
-                                  <p className="text-xs text-gray-400">{t('flights.departure')}</p>
-                                  <p className="font-bold text-lg">{dayjs(flight.returnFlight.departureTime).format('HH:mm')}</p>
-                                  <p className="text-sm">{flight.returnFlight.departureAirport?.code}</p>
-                                </div>
-                                <div className="border-l-2 border-green-200 pl-3">
-                                  <p className="text-xs text-gray-400">{t('flights.arrival')}</p>
-                                  <p className="font-bold text-lg">{dayjs(flight.returnFlight.arrivalTime).format('HH:mm')}</p>
-                                  <p className="text-sm">{flight.returnFlight.arrivalAirport?.code}</p>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-                          <div className="bg-gray-50 p-3 rounded text-sm">
-                            <p className="font-semibold mb-1">{t('flights.baggagePolicy')}</p>
-                            <ul className="list-disc list-inside text-gray-600">
-                              <li>{t('flights.carryOn')}</li>
-                              <li>{t('flights.checkedBag')}</li>
-                              <li>{t('flights.meal')}</li>
-                              <li>{t('flights.wifi')}</li>
-                            </ul>
-                          </div>
-                        </div>
-                      }
-                      footer={
-                        <div className="flex flex-col gap-3 w-full">
-                          <div className="flex flex-col md:flex-row justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
-                            <div className="flex flex-col items-center md:items-start mb-2 md:mb-0">
-                              <p className="font-bold text-lg text-gray-800">Hạng Phổ thông</p>
-                              <p className="text-sm text-gray-500">Balo + 7kg xách tay</p>
-                            </div>
-                            <div className="text-right flex items-center gap-4">
-                              <span className="text-xl font-bold text-red-600">{ecoTotal.toLocaleString('vi-VN')} đ</span>
-                              <Button 
-                                variant="contained" 
-                                sx={{ backgroundColor: '#006ce4', fontWeight: 'bold' }} 
-                                onClick={() => navigate(`/checkout?type=flight&name=${encodeURIComponent(flight.airline + ' ' + flight.flightNumber + tripLabelEco)}&price=${ecoTotal}&details=${encodeURIComponent(JSON.stringify({ [t('flights.departure')]: flight.departureAirport?.city + ' (' + flight.departureAirport?.code + ')', [t('flights.arrival')]: flight.arrivalAirport?.city + ' (' + flight.arrivalAirport?.code + ')' }))}`)}
-                              >CHỌN</Button>
-                            </div>
-                          </div>
-                          <div className="flex flex-col md:flex-row justify-between items-center bg-blue-50 p-3 rounded-lg border border-blue-200">
-                            <div className="flex flex-col items-center md:items-start mb-2 md:mb-0">
-                              <p className="font-bold text-lg text-blue-800">Hạng Thương gia</p>
-                              <p className="text-sm text-blue-600">32kg ký gửi + Phòng chờ Business</p>
-                            </div>
-                            <div className="text-right flex items-center gap-4">
-                              <span className="text-xl font-bold text-red-600">{bizTotal.toLocaleString('vi-VN')} đ</span>
-                              <Button 
-                                variant="contained" 
-                                sx={{ backgroundColor: '#003b95', fontWeight: 'bold' }} 
-                                onClick={() => navigate(`/checkout?type=flight&name=${encodeURIComponent(flight.airline + ' ' + flight.flightNumber + tripLabelBiz)}&price=${bizTotal}&details=${encodeURIComponent(JSON.stringify({ [t('flights.departure')]: flight.departureAirport?.city + ' (' + flight.departureAirport?.code + ')', [t('flights.arrival')]: flight.arrivalAirport?.city + ' (' + flight.arrivalAirport?.code + ')' }))}`)}
-                              >CHỌN</Button>
-                            </div>
-                          </div>
-                        </div>
-                      }
-                    />
                   </div>
                 </div>
               )})}
