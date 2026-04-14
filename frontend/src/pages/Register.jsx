@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SocialButtons from '../components/SocialButtons';
@@ -11,6 +12,7 @@ let useAuth;
 try { useAuth = require('../context/AuthContext').useAuth; } catch(e) { useAuth = () => ({ login: null }); }
 
 const Register = () => {
+    const { t } = useTranslation();
     const [formData, setFormData] = useState({ fullName: '', phoneNumber: '', email: '', password: '' });
     const [status, setStatus]     = useState({ type: '', message: '' });
     const [loading, setLoading]   = useState(false);
@@ -25,10 +27,10 @@ const Register = () => {
         setLoading(true); setStatus({ type: '', message: '' });
         try {
             const response = await axios.post('/api/auth/register', formData);
-            setStatus({ type: 'success', message: response.data.message || 'Đăng ký thành công!' });
+            setStatus({ type: 'success', message: response.data.message || t('auth.registerSuccess') });
             setTimeout(() => navigate('/login', { state: { registeredEmail: formData.email } }), 1500);
         } catch (err) {
-            setStatus({ type: 'error', message: err.response?.data?.message || 'Đăng ký thất bại.' });
+            setStatus({ type: 'error', message: err.response?.data?.message || t('auth.registerError') });
             setLoading(false);
         }
     };
@@ -46,16 +48,16 @@ const Register = () => {
             if (login) login(jwt, { id, email: userEmail, fullName, role });
             navigate('/', { replace: true });
         } catch (err) {
-            setStatus({ type: 'error', message: err.response?.data?.message || `Đăng nhập ${provider} thất bại.` });
+            setStatus({ type: 'error', message: err.response?.data?.message || t('auth.socialLoginError', { provider }) });
             setLoading(false);
         }
     };
 
     const fields = [
-        { name: 'fullName',    type: 'text',     label: 'Họ và tên',       placeholder: 'Nguyễn Văn A', required: true },
-        { name: 'phoneNumber', type: 'tel',      label: 'Số điện thoại',   placeholder: '09xxxxxxxx',   required: false },
-        { name: 'email',       type: 'email',    label: 'Địa chỉ email',   placeholder: 'email@example.com', required: true },
-        { name: 'password',    type: 'password', label: 'Mật khẩu',        placeholder: 'Tạo mật khẩu mạnh', required: true },
+        { name: 'fullName',    type: 'text',     label: t('auth.fullName'),       placeholder: t('auth.fullNamePlaceholder'), required: true },
+        { name: 'phoneNumber', type: 'tel',      label: t('auth.phoneNumber'),   placeholder: t('auth.phoneNumberPlaceholder'),   required: false },
+        { name: 'email',       type: 'email',    label: t('auth.email'),   placeholder: 'email@example.com', required: true },
+        { name: 'password',    type: 'password', label: t('auth.password'),        placeholder: t('auth.passwordCreatePlaceholder'), required: true },
     ];
 
     return (
@@ -65,9 +67,9 @@ const Register = () => {
                 {/* Blue header strip */}
                 <div className="px-8 pt-8 pb-6" style={{ background: NAVY }}>
                     <Link to="/" className="text-white font-black text-xl no-underline block mb-4">Booking.com</Link>
-                    <h1 className="text-white font-bold text-2xl">Tạo tài khoản</h1>
+                    <h1 className="text-white font-bold text-2xl">{t('auth.createAccount')}</h1>
                     <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                        Tham gia miễn phí và nhận ưu đãi thành viên
+                        {t('auth.joinFree')}
                     </p>
                 </div>
 
@@ -98,16 +100,16 @@ const Register = () => {
                             style={{ background: loading ? '#578bfa' : CB }}
                             onMouseOver={e => { if (!loading) e.currentTarget.style.background = NAVY; }}
                             onMouseOut={e => { if (!loading) e.currentTarget.style.background = CB; }}>
-                            {loading ? 'Đang tải...' : 'Tạo tài khoản'}
+                            {loading ? t('auth.signingUp') : t('auth.createNewAccount')}
                         </button>
                     </form>
 
                     <SocialButtons onAuthSuccess={handleSocialLogin} loading={loading} />
 
                     <div className="mt-5 text-center text-sm text-gray-600">
-                        Đã có tài khoản?{' '}
+                        {t('auth.loginPrompt')}{' '}
                         <Link to="/login" className="font-bold no-underline" style={{ color: CB }}>
-                            Đăng nhập
+                            {t('auth.login')}
                         </Link>
                     </div>
                 </div>

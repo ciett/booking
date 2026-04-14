@@ -64,7 +64,7 @@ const Home = () => {
                 <div className="max-w-6xl mx-auto px-6 text-center">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 text-xs font-bold uppercase tracking-widest"
                         style={{ background: CB + '18', color: CB, border: `1px solid ${CB}30` }}>
-                        <i className="fa-solid fa-bolt"></i> Booking tốt nhất Việt Nam
+                        <i className="fa-solid fa-bolt"></i> {t('home.bestBooking')}
                     </div>
                     <h1 className="text-white font-black mb-6 leading-none"
                         style={{ fontSize: 'clamp(40px, 6vw, 72px)', lineHeight: 1.0 }}>
@@ -166,13 +166,13 @@ const Home = () => {
             <section style={{ background: NAVY, padding: '80px 0' }}>
                 <div className="max-w-6xl mx-auto px-6">
                     <h2 className="text-white font-black text-center mb-16" style={{ fontSize: 36, lineHeight: 1.1 }}>
-                        Tại sao chọn Booking.com?
+                        {t('home.whyChoose')}
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         {[
-                            { icon: 'fa-shield-halved', title: 'Bảo mật tuyệt đối', desc: 'Dữ liệu và thanh toán được mã hóa 256-bit. Yên tâm đặt phòng.', color: '#006ce4' },
-                            { icon: 'fa-bolt',          title: 'Giá tốt nhất',       desc: 'Cam kết giá rẻ nhất. Tìm thấy rẻ hơn? Hoàn tiền 110%.',   color: '#10b981' },
-                            { icon: 'fa-headset',       title: 'Hỗ trợ 24/7',        desc: 'Đội ngũ chăm sóc khách hàng sẵn sàng mọi lúc mọi nơi.', color: '#f59e0b' },
+                            { icon: 'fa-shield-halved', title: t('home.security'), desc: t('home.securityDesc'), color: '#006ce4' },
+                            { icon: 'fa-bolt',          title: t('home.bestPrice'),   desc: t('home.bestPriceDesc'), color: '#10b981' },
+                            { icon: 'fa-headset',       title: t('home.support'),     desc: t('home.supportDesc'),   color: '#f59e0b' },
                         ].map(f => (
                             <div key={f.title} className="p-8 rounded-[24px] transition-all"
                                 style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}

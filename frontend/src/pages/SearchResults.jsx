@@ -39,7 +39,7 @@ const EmptyState = ({ city, t }) => (
             <i className="fa-solid fa-magnifying-glass-location text-3xl" style={{ color: CB }}></i>
         </div>
         <h3 className="font-black text-[#0a0b0d] text-xl mb-2" style={{ lineHeight: 1.1 }}>
-            Không tìm thấy chỗ nghỉ nào ở {city || 'đây'}
+            {t('searchResults.noHotelsFound', { city: city || t('searchResults.here') })}
         </h3>
         <p className="max-w-sm text-sm leading-relaxed" style={{ color: '#6b7280' }}>
             {t('searchResults.emptyDesc', 'Vui lòng thử tìm kiếm địa điểm khác hoặc thay đổi ngày nhận, trả phòng.')}
@@ -115,11 +115,11 @@ const SearchResults = () => {
         <div style={{ background: '#f7f8fa', minHeight: '100vh', fontFamily: "'Inter', sans-serif" }}>
             {/* Breadcrumb */}
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-xs font-semibold" style={{ color: CB }}>
-                <span>Trang chủ</span>
+                <span>{t('searchResults.home')}</span>
                 <i className="fa-solid fa-chevron-right text-[8px] text-gray-300"></i>
-                <span>Việt Nam</span>
+                <span>{t('searchResults.vietnam')}</span>
                 <i className="fa-solid fa-chevron-right text-[8px] text-gray-300"></i>
-                <span style={{ color: '#6b7280' }}>{city || 'Tìm kiếm'}</span>
+                <span style={{ color: '#6b7280' }}>{city || t('searchResults.searching')}</span>
             </div>
 
             <div className="max-w-7xl mx-auto px-4 pb-12 flex flex-col md:flex-row gap-6">
@@ -129,10 +129,10 @@ const SearchResults = () => {
                     {/* Header */}
                     <div className="mb-6">
                         <h1 className="font-black text-[#0a0b0d] mb-1" style={{ fontSize: 28, lineHeight: 1.1 }}>
-                            {city || 'Tất cả chỗ nghỉ'}
+                            {city || t('searchResults.allProperties')}
                         </h1>
                         <p style={{ color: '#6b7280', fontSize: 14 }}>
-                            {loading ? 'Đang tìm kiếm...' : `${hotels.length} chỗ nghỉ được tìm thấy`}
+                            {loading ? t('searchResults.searching') : t('searchResults.foundCount', { count: hotels.length })}
                             {(checkIn && checkOut) && ` · ${checkIn} → ${checkOut}`}
                         </p>
                     </div>

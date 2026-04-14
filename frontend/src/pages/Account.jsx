@@ -18,23 +18,23 @@ import dayjs from 'dayjs';
 
 const CB_BLUE = '#006ce4';
 
-const getServiceInfo = (type) => {
+const getServiceInfo = (type, t) => {
   switch (type) {
-    case 'FLIGHT':     return { label: 'Vé Máy Bay',          icon: <FlightIcon style={{ color: CB_BLUE }} />,          bg: '#e8eeff' };
-    case 'HOTEL':      return { label: 'Khách Sạn',           icon: <HotelIcon style={{ color: '#f97316' }} />,         bg: '#fff7ed' };
-    case 'CAR_RENTAL': return { label: 'Thuê Xe',             icon: <DirectionsCarIcon style={{ color: '#16a34a' }} />, bg: '#f0fdf4' };
-    case 'ATTRACTION': return { label: 'Địa Điểm Tham Quan', icon: <AttractionIcon style={{ color: '#9333ea' }} />,    bg: '#faf5ff' };
-    case 'TAXI':       return { label: 'Taxi Sân Bay',        icon: <TaxiIcon style={{ color: '#ca8a04' }} />,         bg: '#fefce8' };
-    case 'COMBO':      return { label: 'Combo Tiết Kiệm',     icon: <ComboIcon style={{ color: '#ec4899' }} />,        bg: '#fdf2f8' };
-    default:           return { label: type || 'Dịch Vụ',    icon: <HistoryIcon style={{ color: '#6b7280' }} />,      bg: '#f9fafb' };
+    case 'FLIGHT':     return { label: t('account.serviceFlight') || 'Vé Máy Bay',          icon: <FlightIcon style={{ color: CB_BLUE }} />,          bg: '#e8eeff' };
+    case 'HOTEL':      return { label: t('account.serviceHotel') || 'Khách Sạn',           icon: <HotelIcon style={{ color: '#f97316' }} />,         bg: '#fff7ed' };
+    case 'CAR_RENTAL': return { label: t('account.serviceCar') || 'Thuê Xe',             icon: <DirectionsCarIcon style={{ color: '#16a34a' }} />, bg: '#f0fdf4' };
+    case 'ATTRACTION': return { label: t('account.serviceAttraction') || 'Địa Điểm Tham Quan', icon: <AttractionIcon style={{ color: '#9333ea' }} />,    bg: '#faf5ff' };
+    case 'TAXI':       return { label: t('account.serviceTaxi') || 'Taxi Sân Bay',        icon: <TaxiIcon style={{ color: '#ca8a04' }} />,         bg: '#fefce8' };
+    case 'COMBO':      return { label: t('account.serviceCombo') || 'Combo Tiết Kiệm',     icon: <ComboIcon style={{ color: '#ec4899' }} />,        bg: '#fdf2f8' };
+    default:           return { label: type || t('account.serviceDefault') || 'Dịch Vụ',    icon: <HistoryIcon style={{ color: '#6b7280' }} />,      bg: '#f9fafb' };
   }
 };
 
-const StatusBadge = ({ status }) => {
+const StatusBadge = ({ status, t }) => {
   const cfg = {
-    CONFIRMED: { label: 'Đã xác nhận', color: '#16a34a', bg: '#dcfce7' },
-    PENDING:   { label: 'Chờ xử lý',   color: '#ca8a04', bg: '#fef9c3' },
-    CANCELLED: { label: 'Đã hủy',      color: '#dc2626', bg: '#fee2e2' },
+    CONFIRMED: { label: t('account.statusConfirmed') || 'Đã xác nhận', color: '#16a34a', bg: '#dcfce7' },
+    PENDING:   { label: t('account.statusPending') || 'Chờ xử lý',   color: '#ca8a04', bg: '#fef9c3' },
+    CANCELLED: { label: t('account.statusCancelled') || 'Đã hủy',      color: '#dc2626', bg: '#fee2e2' },
   }[status] || { label: status, color: '#6b7280', bg: '#f3f4f6' };
 
   return (
@@ -80,26 +80,26 @@ const Account = () => {
     setLoading(true);
     try {
       await api.put('/users/me', { fullName: userProfile.fullName, email: userProfile.email, phoneNumber: userProfile.phoneNumber });
-      message.success('Đã lưu thông tin thành công!');
+      message.success(t('account.updateSuccess') || 'Đã lưu thông tin thành công!');
       if (userProfile.email !== localStorage.getItem('booking_user')) {
-        message.warning('Email đã thay đổi. Hệ thống sẽ đăng xuất!');
+        message.warning(t('account.emailChangedLogout') || 'Email đã thay đổi. Hệ thống sẽ đăng xuất!');
         setTimeout(handleLogout, 2000);
       } else {
         localStorage.setItem('booking_name', userProfile.fullName);
         window.dispatchEvent(new Event('storage'));
       }
-    } catch (err) { message.error(err.response?.data || 'Lỗi khi lưu thông tin'); }
+    } catch (err) { message.error(t('account.saveError') || err.response?.data || 'Lỗi khi lưu thông tin'); }
     finally { setLoading(false); }
   };
 
   const savePassword = async () => {
-    if (passwordData.newPassword !== passwordData.confirmPassword) { message.error('Mật khẩu xác nhận không khớp!'); return; }
+    if (passwordData.newPassword !== passwordData.confirmPassword) { message.error(t('account.passwordMismatch') || 'Mật khẩu xác nhận không khớp!'); return; }
     setLoading(true);
     try {
       await api.put('/users/me/password', { currentPassword: passwordData.currentPassword, newPassword: passwordData.newPassword });
-      message.success('Đổi mật khẩu thành công!');
+      message.success(t('account.passwordSuccess') || 'Đổi mật khẩu thành công!');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    } catch (err) { message.error(err.response?.data || 'Mật khẩu hiện tại không đúng.'); }
+    } catch (err) { message.error(t('account.wrongCurrentPassword') || err.response?.data || 'Mật khẩu hiện tại không đúng.'); }
     finally { setLoading(false); }
   };
 
@@ -136,7 +136,7 @@ const Account = () => {
                 style={{ background: CB_BLUE, letterSpacing: '-1px' }}>
                 {userProfile.fullName ? userProfile.fullName.charAt(0).toUpperCase() : 'U'}
               </div>
-              <h2 className="text-white text-base font-bold text-center leading-tight">{userProfile.fullName || 'Người dùng'}</h2>
+              <h2 className="text-white text-base font-bold text-center leading-tight">{userProfile.fullName || t('account.defaultUser') || 'Người dùng'}</h2>
               <p className="text-gray-400 text-xs text-center mt-1">{userProfile.email}</p>
               <span className="mt-3 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full"
                 style={{ background: CB_BLUE + '22', color: CB_BLUE }}>
@@ -182,12 +182,12 @@ const Account = () => {
                 <h3 className="text-2xl font-black text-[#0a0b0d] mb-1" style={{ lineHeight: 1.1 }}>
                   {t('account.personalInfo')}
                 </h3>
-                <p className="text-sm text-gray-400 mb-8">Cập nhật thông tin tài khoản của bạn</p>
+                <p className="text-sm text-gray-400 mb-8">{t('account.updateSubtitle') || 'Cập nhật thông tin tài khoản của bạn'}</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <label className="block text-xs font-bold text-[#0a0b0d] mb-2 uppercase tracking-wider">{t('account.fullName')}</label>
-                    <input type="text" name="fullName" value={userProfile.fullName || ''} onChange={handleProfileChange} className={inputCls} placeholder="Họ và tên" />
+                    <input type="text" name="fullName" value={userProfile.fullName || ''} onChange={handleProfileChange} className={inputCls} placeholder={t('account.fullName')} />
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#0a0b0d] mb-2 uppercase tracking-wider">Email</label>
@@ -195,7 +195,7 @@ const Account = () => {
                   </div>
                   <div>
                     <label className="block text-xs font-bold text-[#0a0b0d] mb-2 uppercase tracking-wider">{t('account.phoneNumber')}</label>
-                    <input type="tel" name="phoneNumber" value={userProfile.phoneNumber || ''} onChange={handleProfileChange} className={inputCls} placeholder="09xxxxxxxx" />
+                    <input type="tel" name="phoneNumber" value={userProfile.phoneNumber || ''} onChange={handleProfileChange} className={inputCls} placeholder={t('account.phoneNumberPlaceholder') || "09xxxxxxxx"} />
                   </div>
                 </div>
 
@@ -205,7 +205,7 @@ const Account = () => {
                     style={{ background: loading ? '#578bfa' : CB_BLUE }}
                     onMouseOver={e => { if (!loading) e.currentTarget.style.background = '#578bfa'; }}
                     onMouseOut={e => { if (!loading) e.currentTarget.style.background = CB_BLUE; }}>
-                    {loading ? 'Đang lưu...' : t('account.saveChanges')}
+                    {loading ? (t('account.updating') || 'Đang lưu...') : t('account.saveChanges')}
                   </button>
                 </div>
               </div>
@@ -217,7 +217,7 @@ const Account = () => {
                 <h3 className="text-2xl font-black text-[#0a0b0d] mb-1" style={{ lineHeight: 1.1 }}>
                   {t('account.bookings')}
                 </h3>
-                <p className="text-sm text-gray-400 mb-8">Lịch sử các chuyến đi và dịch vụ đã đặt</p>
+                <p className="text-sm text-gray-400 mb-8">{t('account.bookingSubtitle') || 'Lịch sử các chuyến đi và dịch vụ đã đặt'}</p>
 
                 {bookings.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -237,7 +237,7 @@ const Account = () => {
                 ) : (
                   <div className="space-y-3">
                     {bookings.map(book => {
-                      const info = getServiceInfo(book.bookingType);
+                      const info = getServiceInfo(book.bookingType, t);
                       return (
                         <div key={book.id}
                           className="flex flex-col md:flex-row justify-between md:items-center gap-4 p-5 rounded-2xl transition-all duration-200 group cursor-pointer"
@@ -256,7 +256,7 @@ const Account = () => {
                                   style={{ background: '#006ce412', color: CB_BLUE }}>
                                   #{book.id}
                                 </span>
-                                <StatusBadge status={book.status} />
+                                <StatusBadge status={book.status} t={t} />
                               </div>
                               <h4 className="font-bold text-base text-[#0a0b0d]">{info.label}</h4>
                               <p className="text-xs text-gray-400 mt-0.5">
@@ -286,13 +286,13 @@ const Account = () => {
                 <h3 className="text-2xl font-black text-[#0a0b0d] mb-1" style={{ lineHeight: 1.1 }}>
                   {t('account.accountSecurity')}
                 </h3>
-                <p className="text-sm text-gray-400 mb-8">Quản lý mật khẩu và bảo mật tài khoản</p>
+                <p className="text-sm text-gray-400 mb-8">{t('account.securitySubtitle') || 'Quản lý mật khẩu và bảo mật tài khoản'}</p>
 
                 <div className="space-y-5 max-w-md">
                   {[
-                    { name: 'currentPassword', label: 'Mật khẩu hiện tại', placeholder: '••••••••' },
-                    { name: 'newPassword',     label: 'Mật khẩu mới',      placeholder: 'Ít nhất 8 ký tự' },
-                    { name: 'confirmPassword', label: 'Xác nhận mật khẩu', placeholder: 'Nhập lại mật khẩu mới' },
+                    { name: 'currentPassword', label: t('account.currentPassword') || 'Mật khẩu hiện tại', placeholder: '••••••••' },
+                    { name: 'newPassword',     label: t('account.newPassword') || 'Mật khẩu mới',      placeholder: 'Ít nhất 8 ký tự' },
+                    { name: 'confirmPassword', label: t('account.confirmPassword') || 'Xác nhận mật khẩu', placeholder: 'Nhập lại mật khẩu mới' },
                   ].map(f => (
                     <div key={f.name}>
                       <label className="block text-xs font-bold text-[#0a0b0d] mb-2 uppercase tracking-wider">{f.label}</label>
@@ -307,7 +307,7 @@ const Account = () => {
                     style={{ background: loading ? '#578bfa' : CB_BLUE }}
                     onMouseOver={e => { if (!loading) e.currentTarget.style.background = '#578bfa'; }}
                     onMouseOut={e => { if (!loading) e.currentTarget.style.background = CB_BLUE; }}>
-                    {loading ? 'Đang cập nhật...' : (t('account.changePassword') || 'Đổi mật khẩu')}
+                    {loading ? (t('account.updating') || 'Đang cập nhật...') : t('account.changePassword')}
                   </button>
                 </div>
               </div>
@@ -319,7 +319,7 @@ const Account = () => {
                 <h3 className="text-2xl font-black text-[#0a0b0d] mb-1" style={{ lineHeight: 1.1 }}>
                   {t('account.appSettings')}
                 </h3>
-                <p className="text-sm text-gray-400 mb-8">Tuỳ chỉnh ngôn ngữ và hiển thị</p>
+                <p className="text-sm text-gray-400 mb-8">{t('account.settingsSubtitle') || 'Tuỳ chỉnh ngôn ngữ và hiển thị'}</p>
 
                 <div className="space-y-6 max-w-md">
                   <div>

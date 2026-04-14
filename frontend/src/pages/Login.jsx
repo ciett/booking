@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import api from '../services/api';
 import SocialButtons from '../components/SocialButtons';
@@ -11,6 +12,7 @@ let useAuth;
 try { useAuth = require('../context/AuthContext').useAuth; } catch(e) { useAuth = () => ({ login: null }); }
 
 const Login = () => {
+    const { t } = useTranslation();
     const location = useLocation();
     const navigate = useNavigate();
     let login = null;
@@ -40,7 +42,7 @@ const Login = () => {
             const response = await api.post('/auth/login', { email, password });
             handleLoginResponse(response);
         } catch (err) {
-            setError(err.response?.data?.message || 'Email hoặc mật khẩu không đúng.');
+            setError(err.response?.data?.message || t('auth.loginError'));
         } finally { setLoading(false); }
     };
 
@@ -50,7 +52,7 @@ const Login = () => {
             const response = await api.post('/auth/social-login', { provider, token, email, name });
             handleLoginResponse(response);
         } catch (err) {
-            setError(err.response?.data?.message || `Đăng nhập ${provider} thất bại.`);
+            setError(err.response?.data?.message || t('auth.socialLoginError', { provider }));
         } finally { setLoading(false); }
     };
 
@@ -61,9 +63,9 @@ const Login = () => {
                 {/* Blue header strip */}
                 <div className="px-8 pt-8 pb-6" style={{ background: NAVY }}>
                     <Link to="/" className="text-white font-black text-xl no-underline block mb-4">Booking.com</Link>
-                    <h1 className="text-white font-bold text-2xl">Đăng nhập</h1>
+                    <h1 className="text-white font-bold text-2xl">{t('auth.login')}</h1>
                     <p className="text-sm mt-1" style={{ color: 'rgba(255,255,255,0.75)' }}>
-                        Chào mừng trở lại!
+                        {t('auth.welcomeBack')}
                     </p>
                 </div>
 
@@ -71,13 +73,13 @@ const Login = () => {
                 <div className="px-8 py-6">
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1">Địa chỉ email</label>
+                            <label className="block text-sm font-semibold text-gray-700 mb-1">{t('auth.email')}</label>
                             <input type="email" required placeholder="email@example.com" value={email}
                                 onChange={e => setEmail(e.target.value)} className={inputCls} />
                         </div>
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700 mb-1">Mật khẩu</label>
-                            <input type="password" required placeholder="Nhập mật khẩu" value={password}
+                            <label className="block text-sm font-semibold text-gray-700 mb-1">{t('auth.password')}</label>
+                            <input type="password" required placeholder={t('auth.passwordPlaceholder')} value={password}
                                 onChange={e => setPassword(e.target.value)} className={inputCls} />
                         </div>
 
@@ -92,16 +94,16 @@ const Login = () => {
                             style={{ background: loading ? '#578bfa' : CB }}
                             onMouseOver={e => { if (!loading) e.currentTarget.style.background = NAVY; }}
                             onMouseOut={e => { if (!loading) e.currentTarget.style.background = CB; }}>
-                            {loading ? 'Đang kiểm tra...' : 'Đăng nhập'}
+                             {loading ? t('auth.signingIn') : t('auth.login')}
                         </button>
                     </form>
 
                     <SocialButtons onAuthSuccess={handleSocialLogin} loading={loading} />
 
                     <div className="mt-5 text-center text-sm text-gray-600">
-                        Chưa có tài khoản?{' '}
+                        {t('auth.registerPrompt')}{' '}
                         <Link to="/register" className="font-bold no-underline" style={{ color: CB }}>
-                            Tạo tài khoản mới
+                            {t('auth.createNewAccount')}
                         </Link>
                     </div>
                 </div>

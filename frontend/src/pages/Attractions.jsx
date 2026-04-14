@@ -39,7 +39,7 @@ const Attractions = () => {
     const handleSearch = async (cityName) => {
         const searchCity = typeof cityName === 'string' ? cityName : city;
         if (!searchCity) {
-            message.warning(t('common.pleaseSelectCity') || "Vui lòng nhập thành phố bạn muốn đến");
+            message.warning(t('attractions.fillSearchInfo') || t('common.pleaseSelectCity') || "Vui lòng nhập thành phố bạn muốn đến");
             return;
         }
         setLoading(true);
@@ -163,7 +163,7 @@ const Attractions = () => {
                 {!searched && (
                     <div className="max-w-6xl mx-auto px-4 mt-20 w-full animate-fade-in-up">
                         <h2 className="text-3xl font-black mb-2 text-[#0a0b0d] text-center">{t('attractions.popularAttractions')}</h2>
-                        <p className="text-gray-500 font-medium mb-10 text-center">Khám phá các hoạt động được yêu thích nhất từ du khách Việt Nam</p>
+                        <p className="text-gray-500 font-medium mb-10 text-center">{t('attractions.popularSubtitle') || "Khám phá các hoạt động được yêu thích nhất từ du khách Việt Nam"}</p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-6 gap-6">
                             {[
@@ -202,8 +202,8 @@ const AttractionCard = ({ attraction, t, navigate }) => {
     const handleBook = () => {
         navigate(`/checkout?type=attraction&name=${encodeURIComponent(attraction.name)}&price=${totalPrice}&details=${encodeURIComponent(JSON.stringify({ 
             [t('attractions.destination')]: attraction.city, 
-            'Ngày tham quan': visitDate.format('DD/MM/YYYY'),
-            'Số lượng vé': tickets
+            [t('attractions.visitDate')]: visitDate.format('DD/MM/YYYY'),
+            [t('attractions.ticketQuantity')]: tickets
         }))}`);
     };
 
@@ -241,7 +241,7 @@ const AttractionCard = ({ attraction, t, navigate }) => {
                         {attraction.name}
                     </h3>
                     <p className="text-[13px] text-gray-400 font-medium leading-relaxed line-clamp-2 mb-6 italic">
-                        {attraction.description || 'Khám phá vẻ đẹp và những hoạt động thú vị tại địa điểm này cùng gói dịch vụ cao cấp.'}
+                        {attraction.description || t('attractions.defaultDescription') || 'Khám phá vẻ đẹp và những hoạt động thú vị tại địa điểm này cùng gói dịch vụ cao cấp.'}
                     </p>
                 </div>
 
@@ -249,7 +249,7 @@ const AttractionCard = ({ attraction, t, navigate }) => {
                     <div>
                         <p className="text-[11px] font-black text-gray-300 uppercase tracking-widest mb-1">{t('attractions.priceFrom')}</p>
                         <p className="text-2xl font-black text-[#0a0b0d]">
-                            {attraction.price ? `${Number(attraction.price).toLocaleString('vi-VN')} đ` : 'Liên hệ'}
+                            {attraction.price ? `${Number(attraction.price).toLocaleString('vi-VN')} đ` : (t('attractions.contactPrice') || 'Liên hệ')}
                         </p>
                     </div>
                     <DetailOverlay
@@ -266,11 +266,11 @@ const AttractionCard = ({ attraction, t, navigate }) => {
                                     <img src={attraction.imageUrl || 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800'} className="w-full h-full object-cover" />
                                 </div>
                                 <div className="bg-blue-50 p-5 rounded-2xl border border-blue-100 space-y-4">
-                                    <label className="text-[11px] font-black text-[#003580] uppercase tracking-widest">Chọn ngày & số lượng</label>
+                                    <label className="text-[11px] font-black text-[#003580] uppercase tracking-widest">{t('attractions.selectDateAndQuantity') || "Chọn ngày & số lượng"}</label>
                                     <DatePicker value={visitDate} onChange={setVisitDate} className="w-full h-12 rounded-xl border-blue-100 font-bold" format="DD/MM/YYYY" allowClear={false} />
                                     <div className="flex items-center gap-4 bg-white p-2 rounded-xl shadow-sm">
                                         <button onClick={() => setTickets(Math.max(1, tickets - 1))} className="w-10 h-10 rounded-lg bg-gray-50 hover:bg-gray-100 font-black">-</button>
-                                        <span className="font-black text-lg text-[#0a0b0d] flex-1 text-center">{tickets} Vé</span>
+                                        <span className="font-black text-lg text-[#0a0b0d] flex-1 text-center">{tickets} {t('attractions.tickets') || 'Vé'}</span>
                                         <button onClick={() => setTickets(tickets + 1)} className="w-10 h-10 rounded-lg bg-gray-50 hover:bg-gray-100 font-black text-blue-600">+</button>
                                     </div>
                                 </div>

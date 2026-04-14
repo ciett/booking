@@ -37,7 +37,7 @@ const AirportTaxis = () => {
 
   const handleSearch = async () => {
     if (!pickupCity) {
-      message.warning(t('common.pleaseSelectCity') || "Vui lòng nhập thành phố hoặc sân bay");
+      message.warning(t('airportTaxis.fillSearchInfo') || t('common.pleaseSelectCity') || "Vui lòng nhập thành phố hoặc sân bay");
       return;
     }
     setLoading(true);
@@ -60,7 +60,7 @@ const AirportTaxis = () => {
           ...taxi,
           transferFee,
           totalPrice: taxi.basePrice + transferFee,
-          destination: destination || t('airportTaxis.center') || "Trung tâm thành phố"
+          destination: destination || t('airportTaxis.cityCenter') || "Trung tâm thành phố"
         };
       });
 
@@ -143,7 +143,7 @@ const AirportTaxis = () => {
                       variant="borderless"
                       className="w-full font-bold text-lg min-w-0"
                       format="DD/MM/YYYY"
-                      placeholder="Ngày đón"
+                      placeholder={t('airportTaxis.pickupDate') || "Ngày đón"}
                       onChange={(d) => setDate(d)} 
                   />
                 </ConfigProvider>
@@ -181,7 +181,7 @@ const AirportTaxis = () => {
                                 <i className="fa-solid fa-taxi text-3xl text-blue-600"></i>
                             </div>
                             <div className="bg-green-50 text-green-700 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest border border-green-100">
-                                Xác nhận ngay
+                                {t('airportTaxis.instantConfirmBadge') || "Xác nhận ngay"}
                             </div>
                         </div>
                         <h3 className="font-black text-xl text-[#0a0b0d] mb-2 group-hover:text-[#006ce4] transition-colors">{taxi.carType}</h3>
@@ -231,7 +231,7 @@ const AirportTaxis = () => {
         {/* Benefits... */}
         {results.length === 0 && (
           <div className="max-w-6xl mx-auto px-4 mt-20 w-full animate-fade-in-up">
-            <h2 className="text-3xl font-black mb-10 text-[#0a0b0d] text-center">Dịch vụ đưa đón tin cậy từ sân bay</h2>
+            <h2 className="text-3xl font-black mb-10 text-[#0a0b0d] text-center">{t('airportTaxis.benefitsTitle') || "Dịch vụ đưa đón tin cậy từ sân bay"}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {[
                     { icon: 'fa-bolt', title: t('airportTaxis.instantConfirm'), desc: t('airportTaxis.instantConfirmDesc'), color: '#10b981' },

@@ -44,10 +44,10 @@ const Flights = () => {
   const handleSearch = async () => {
     if (!departureCode || !arrivalCode || !departureDate || departureDate.length === 0) {
       if (tripType === 'roundtrip' && (!departureDate || departureDate.length !== 2)) {
-          message.warning("Vui lòng chọn ngày đi và ngày về");
+          message.warning(t('flights.selectRoundtripDates'));
           return;
       }
-      message.warning("Vui lòng chọn đầy đủ thông tin: Điểm đi, Điểm đến và Ngày đi");
+      message.warning(t('flights.fillSearchInfo'));
       return;
     }
     setLoading(true);
@@ -71,7 +71,7 @@ const Flights = () => {
         const retFlights = responseRet.data;
 
         if (retFlights.length === 0) {
-          message.warning("Không tìm thấy chuyến bay chiều về trong ngày bạn chọn!");
+          message.warning(t('flights.noReturnFlight'));
           setResults([]);
         } else {
           const cheapestReturn = retFlights.reduce((prev, curr) => (prev.price < curr.price ? prev : curr), retFlights[0]);
@@ -83,7 +83,7 @@ const Flights = () => {
       }
     } catch (error) {
       console.error("Error fetching flights", error);
-      message.error("Lỗi khi tìm kiếm chuyến bay");
+      message.error(t('flights.searchError'));
     } finally {
       setLoading(false);
     }
@@ -213,8 +213,8 @@ const Flights = () => {
                 const retPrice = flight.returnFlight ? flight.returnFlight.price : 0;
                 const ecoTotal = isRound ? (flight.price + retPrice + 200000) : flight.price;
                 const bizTotal = isRound ? ((flight.price * 2.5) + (retPrice * 2.5) + 200000) : (flight.price * 2.5);
-                const tripLabelEco = (isRound ? ' (Khứ hồi)' : ' (Một chiều)') + ' - Phổ thông';
-                const tripLabelBiz = (isRound ? ' (Khứ hồi)' : ' (Một chiều)') + ' - Thương gia';
+                const tripLabelEco = (isRound ? ` (${t('flights.roundtrip')})` : ` (${t('flights.oneway')})`) + ` - ${t('flights.economy')}`;
+                const tripLabelBiz = (isRound ? ` (${t('flights.roundtrip')})` : ` (${t('flights.oneway')})`) + ` - ${t('flights.business')}`;
 
                 return (
                 <div key={flight.id} className="bg-white rounded-[24px] border border-gray-100 overflow-hidden hover:shadow-2xl transition-all group">
@@ -235,7 +235,7 @@ const Flights = () => {
                             <div className="text-gray-400 font-bold text-sm tracking-widest">{flight.departureAirport?.code}</div>
                         </div>
                         <div className="flex flex-col items-center justify-center w-full max-w-[150px]">
-                            <span className="text-[11px] text-[#006ce4] font-black uppercase tracking-widest mb-1">Bay thẳng</span>
+                            <span className="text-[11px] text-[#006ce4] font-black uppercase tracking-widest mb-1">{t('flights.directFlight')}</span>
                             <div className="w-full border-b-2 border-dashed border-gray-200 relative flex items-center justify-center mb-4">
                                 <i className="fa-solid fa-plane absolute bg-white px-2 text-gray-300 text-xs"></i>
                             </div>
@@ -247,7 +247,7 @@ const Flights = () => {
                     </div>
 
                     <div className="flex flex-col items-center md:items-end w-full md:w-auto shrink-0 border-t md:border-t-0 md:border-l border-gray-100 pt-4 md:pt-0 md:pl-8">
-                        <span className="text-xs text-gray-400 mb-1 font-black uppercase tracking-widest">Giá mỗi khách</span>
+                        <span className="text-xs text-gray-400 mb-1 font-black uppercase tracking-widest">{t('flights.pricePerPassenger')}</span>
                         <span className="text-3xl font-black text-[#0a0b0d] mb-3">{ecoTotal.toLocaleString('vi-VN')} <span className="text-sm">VND</span></span>
                         <DetailOverlay 
                         trigger={
@@ -259,21 +259,21 @@ const Flights = () => {
                             </button>
                         }
                         title={flight.airline}
-                        description={`Hành trình ${flight.flightNumber}`}
+                        description={`${t('flights.journeyLabel')} ${flight.flightNumber}`}
                         content={
                             <div className="space-y-4">
                                 <div className="bg-[#006ce4] bg-opacity-5 p-4 rounded-2xl border border-blue-100 flex justify-between items-center">
-                                    <span className="font-black text-[#003580]">{flight.airline} {isRound ? 'Khứ hồi' : 'Một chiều'}</span>
+                                    <span className="font-black text-[#003580]">{flight.airline} {isRound ? t('flights.roundtrip') : t('flights.oneway')}</span>
                                     <span className="bg-white px-3 py-1 rounded-lg text-sm font-black shadow-sm">#{flight.flightNumber}</span>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Khởi hành</p>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('flights.departure')}</p>
                                         <p className="font-black text-2xl text-[#0a0b0d] mb-1">{dayjs(flight.departureTime).format('HH:mm')}</p>
                                         <p className="font-bold text-sm text-gray-700">{flight.departureAirport?.city} ({flight.departureAirport?.code})</p>
                                     </div>
                                     <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Hạ cánh</p>
+                                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">{t('flights.arrival')}</p>
                                         <p className="font-black text-2xl text-[#0a0b0d] mb-1">{dayjs(flight.arrivalTime).format('HH:mm')}</p>
                                         <p className="font-bold text-sm text-gray-700">{flight.arrivalAirport?.city} ({flight.arrivalAirport?.code})</p>
                                     </div>
@@ -281,7 +281,7 @@ const Flights = () => {
                                 {flight.returnFlight && (
                                     <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
                                         <p className="font-black text-[#006ce4] mb-3 flex items-center gap-2">
-                                            <i className="fa-solid fa-plane fa-flip-horizontal"></i> Chuyến về: {flight.returnFlight.airline}
+                                            <i className="fa-solid fa-plane fa-flip-horizontal"></i> {t('flights.returnFlight')}: {flight.returnFlight.airline}
                                         </p>
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="bg-blue-50 p-3 rounded-2xl">
@@ -301,14 +301,14 @@ const Flights = () => {
                             <div className="flex flex-col gap-3 w-full">
                                 <div className="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
                                     <div>
-                                        <p className="font-black text-[#0a0b0d]">Hạng Phổ thông</p>
-                                        <p className="text-xs text-gray-400 font-bold">7kg hành lý xách tay</p>
+                                        <p className="font-black text-[#0a0b0d]">{t('flights.economyClass')}</p>
+                                        <p className="text-xs text-gray-400 font-bold">{t('flights.carryOn')}</p>
                                     </div>
                                     <div className="flex items-center gap-4">
                                         <span className="text-xl font-black text-[#0a0b0d]">{ecoTotal.toLocaleString('vi-VN')} đ</span>
                                         <button className="bg-[#006ce4] text-white px-6 py-2 rounded-xl font-black text-sm active:scale-95"
                                             onClick={() => navigate(`/checkout?type=flight&name=${encodeURIComponent(flight.airline + ' ' + flight.flightNumber + tripLabelEco)}&price=${ecoTotal}&details=${encodeURIComponent(JSON.stringify({ [t('flights.departure')]: flight.departureAirport?.city, [t('flights.arrival')]: flight.arrivalAirport?.city }))}`)}>
-                                            CHỌN
+                                            {t('flights.selectFlight')}
                                         </button>
                                     </div>
                                 </div>

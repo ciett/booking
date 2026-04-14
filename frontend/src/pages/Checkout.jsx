@@ -33,14 +33,14 @@ const Checkout = () => {
 
   useEffect(() => {
      if (statusParam === 'cancel') {
-         message.warning('Thanh toán đã bị hủy.');
+         message.warning(t('checkout.paymentCanceled'));
      }
      // Khi PayOS redirect về với status=success, tự động xác nhận booking trong DB
      if (statusParam === 'success') {
          const code = searchParams.get('bookingCode');
          if (code) {
              api.patch(`/bookings/confirm-by-code/${code}`)
-                 .then(() => console.log('Booking đã được xác nhận tự động.'))
+                 .then(() => console.log(t('checkout.bookingAutoConfirmed')))
                  .catch(err => console.warn('Không thể tự xác nhận booking:', err));
          }
      }
@@ -51,7 +51,7 @@ const Checkout = () => {
     if (timeLeft <= 0) {
       setShowQrModal(false);
       setOrderStatus('idle');
-      message.error("Hết thời gian thanh toán mã QR!");
+      message.error(t('checkout.qrTimeout'));
       return;
     }
     const timerId = setInterval(() => setTimeLeft((t) => t - 1), 1000);
@@ -63,7 +63,7 @@ const Checkout = () => {
     
     // Nếu chưa đăng nhập, chuyển hướng sang /login và lưu lại đường dẫn hiện tại để quay lại
     if (!token) {
-      message.warning('Vui lòng đăng nhập để tiếp tục đặt chỗ.');
+      message.warning(t('checkout.loginToContinue'));
       navigate('/login', { state: { from: location } });
       return; // Không gọi API bên dưới nếu không có token
     }
@@ -84,7 +84,7 @@ const Checkout = () => {
         console.error("Không thể tự động điền thông tin người dùng", err);
         if (err.response && (err.response.status === 401 || err.response.status === 403)) {
           localStorage.removeItem('booking_token');
-          message.warning('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+          message.warning(t('checkout.sessionExpired'));
           navigate('/login', { state: { from: location } });
         }
       });
@@ -132,7 +132,7 @@ const Checkout = () => {
       return res.data.id; 
     } catch (err) {
       console.error(err);
-      message.error("Lỗi khi khởi tạo đơn hàng PayPal");
+      message.error(t('checkout.paypalInitError'));
     }
   };
 
@@ -146,14 +146,14 @@ const Checkout = () => {
       const captureData = res.data;
       
       if (captureData.status === 'COMPLETED') {
-         message.success("Thanh toán thành công qua PayPal!");
+         message.success(t('checkout.paypalSuccess'));
          setOrderStatus('completed');
       } else {
-         message.error("Thanh toán chưa được hoàn tất");
+         message.error(t('checkout.paypalCanceled'));
       }
     } catch (err) {
       console.error(err);
-      message.error("Lỗi khi xác nhận thanh toán");
+      message.error(t('checkout.confirmError'));
     }
   };
 
@@ -248,13 +248,13 @@ const Checkout = () => {
     } catch (err) {
       console.error("Lỗi khi tạo giao dịch:", err);
       if (err.response && (err.response.status === 401 || err.response.status === 403)) {
-         message.error(t('checkout.sessionExpired', 'Phiên làm việc đã hết hạn. Hệ thống đang chuyển hướng về trang Đăng nhập...'));
+         message.error(t('checkout.sessionExpired'));
          localStorage.removeItem('booking_token');
          setTimeout(() => {
              navigate('/login', { state: { from: location } });
          }, 1500);
       } else {
-         message.error("Không thể kết nối với cổng thanh toán. Vui lòng thử lại sau.");
+         message.error(t('checkout.payOsConnectError'));
       }
       setOrderStatus('idle');
     }
@@ -296,10 +296,7 @@ const Checkout = () => {
               <span className="font-bold text-green-600">{totalPrice.toLocaleString('vi-VN')} đ</span>
             </div>
             <div className="flex justify-between text-sm font-semibold">
-              <span className="text-gray-500">Trạng thái:</span>
-              <span className="text-green-600">
-                 Đã thanh toán (Xác nhận 100%)
-              </span>
+                 {t('checkout.statusPaid')}
             </div>
           </div>
           <button
@@ -312,7 +309,7 @@ const Checkout = () => {
             onClick={() => navigate('/account', { state: { tab: 'bookings' } })}
             className="mt-3 border-2 border-[#003b95] text-[#003b95] px-8 py-3 rounded-lg font-bold hover:bg-blue-50 transition-all w-full flex items-center justify-center gap-2"
           >
-            <i className="fa-solid fa-clock-rotate-left"></i> Xem lịch sử đặt chỗ
+            <i className="fa-solid fa-clock-rotate-left"></i> {t('checkout.viewHistory')}
           </button>
         </div>
       </div>
@@ -395,19 +392,19 @@ const Checkout = () => {
                   >
                     <input type="radio" name="payment" value="bank" checked={paymentMethod === 'bank'} onChange={() => setPaymentMethod('bank')} className="accent-[#003b95] w-5 h-5" />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Chuyển khoản ngân hàng (VietQR)</p>
-                      <p className="text-xs text-gray-500">Phổ biến nhất tại Việt Nam, phí thấp và tiện lợi</p>
+                      <p className="font-bold text-gray-900">{t('checkout.bankTransfer')}</p>
+                      <p className="text-xs text-gray-500">{t('checkout.bankTransferDesc')}</p>
                     </div>
                     <i className="fa-solid fa-qrcode text-xl text-[#003b95]"></i>
                   </label>
 
                   {paymentMethod === 'bank' && (
                     <div className="ml-9 p-4 bg-blue-50 rounded-lg border border-blue-200 animate-fade-in-up text-sm text-blue-800">
-                      <p className="font-semibold mb-1"><i className="fa-solid fa-circle-info mr-2"></i>Hướng dẫn thanh toán:</p>
+                      <p className="font-semibold mb-1"><i className="fa-solid fa-circle-info mr-2"></i>{t('checkout.paymentInstruction')}</p>
                       <ul className="list-disc pl-5 space-y-1">
-                        <li>Bấm <strong>Hoàn tất thanh toán</strong> ở cột bên phải để tiếp tục.</li>
-                        <li>Mã QR chuyển khoản sẽ hiển thị an toàn trên màn hình lớn.</li>
-                        <li>Sử dụng App Ngân hàng bất kỳ để quét mã và tự động nhận diện thông tin.</li>
+                        <li>{t('checkout.bankInstruction1')}</li>
+                        <li>{t('checkout.bankInstruction2')}</li>
+                        <li>{t('checkout.bankInstruction3')}</li>
                       </ul>
                     </div>
                   )}
@@ -420,15 +417,15 @@ const Checkout = () => {
                   >
                     <input type="radio" name="payment" value="ewallet" checked={paymentMethod === 'ewallet'} onChange={() => setPaymentMethod('ewallet')} className="accent-[#003b95] w-5 h-5" />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Ví điện tử (Momo/ZaloPay/VNPAY)</p>
-                      <p className="text-xs text-gray-500">Tiện lợi cho khách dùng mobile, quét mã thanh toán ngay</p>
+                      <p className="font-bold text-gray-900">{t('checkout.eWallet')}</p>
+                      <p className="text-xs text-gray-500">{t('checkout.eWalletDesc')}</p>
                     </div>
                     <i className="fa-solid fa-wallet text-xl text-pink-500"></i>
                   </label>
 
                   {paymentMethod === 'ewallet' && (
                     <div className="ml-9 p-5 bg-purple-50 rounded-xl border border-purple-200 animate-fade-in-up">
-                      <p className="text-sm font-semibold text-purple-800 mb-3">{t('checkout.ewalletInstruction', 'Thanh toán trực tiếp bằng ví điện tử qua mã PayOS/VietQR:')}</p>
+                      <p className="text-sm font-semibold text-purple-800 mb-3">{t('checkout.ewalletInstruction')}</p>
                       <div className="grid grid-cols-3 gap-3 mt-4">
                         <button type="button" onClick={() => setSelectedWallet('momo')} className={`border-2 p-3 rounded-xl flex flex-col items-center justify-center transition-all focus:outline-none ${selectedWallet === 'momo' ? 'border-pink-500 bg-pink-50 shadow-sm' : 'border-gray-200 hover:border-pink-300 bg-white'}`}>
                           <div className="w-10 h-10 rounded-xl bg-pink-500 text-white flex items-center justify-center text-xl font-bold mb-2 shadow-sm">M</div>
@@ -446,7 +443,7 @@ const Checkout = () => {
                       <div className="mt-4 flex items-start gap-2 bg-purple-100 p-3 rounded-lg">
                         <i className="fa-solid fa-bolt text-purple-600 mt-0.5"></i>
                         <p className="text-xs text-purple-800 leading-relaxed font-medium">
-                          Sau khi bấm Xác nhận, bạn sẽ được tự động chuyển đến cổng thanh toán PayOS. Hãy mở App Ví để quét mã. Đơn hàng sẽ được duyệt ngay lập tức!
+                          {t('checkout.ewalletInstructionNote')}
                         </p>
                       </div>
                     </div>
@@ -460,8 +457,8 @@ const Checkout = () => {
                   >
                     <input type="radio" name="payment" value="paypal" checked={paymentMethod === 'paypal'} onChange={() => setPaymentMethod('paypal')} className="accent-[#003b95] w-5 h-5" />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Ví điện tử quốc tế (PayPal Wallet)</p>
-                      <p className="text-xs text-gray-500">Đăng nhập tài khoản PayPal để thanh toán nhanh chóng</p>
+                      <p className="font-bold text-gray-900">{t('checkout.globalWallet')}</p>
+                      <p className="text-xs text-gray-500">{t('checkout.globalWalletDesc')}</p>
                     </div>
                     <div className="flex gap-2 text-[#00457C]">
                         <i className="fa-brands fa-paypal text-3xl"></i>
@@ -470,7 +467,7 @@ const Checkout = () => {
 
                   {paymentMethod === 'paypal' && (
                     <div className="ml-9 p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in-up flex flex-col items-center">
-                      <p className="text-sm border-b border-gray-200 pb-2 font-semibold text-gray-700 w-full mb-4 text-center">Bấm vào nút PayPal bên dưới để đăng nhập ví của bạn</p>
+                      <p className="text-sm border-b border-gray-200 pb-2 font-semibold text-gray-700 w-full mb-4 text-center">{t('checkout.paypalClickPrompt')}</p>
                       <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD" }}>
                         {totalPrice > 0 ? (
                           <div className="w-full max-w-sm">
@@ -483,7 +480,7 @@ const Checkout = () => {
                           </div>
                         ) : (
                           <div className="p-4 bg-orange-50 border border-orange-200 text-orange-600 rounded-xl text-center text-sm font-semibold w-full">
-                            Vui lòng chọn sản phẩm có giá trị lớn hơn 0.
+                            {t('checkout.minAmountError')}
                           </div>
                         )}
                       </PayPalScriptProvider>
@@ -498,8 +495,8 @@ const Checkout = () => {
                   >
                     <input type="radio" name="payment" value="visa" checked={paymentMethod === 'visa'} onChange={() => setPaymentMethod('visa')} className="accent-[#003b95] w-5 h-5" />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900">Thẻ thanh toán Quốc tế (Visa, Mastercard, Amex)</p>
-                      <p className="text-xs text-gray-500">Bảo mật giao dịch cao cấp với cổng thanh toán PayPal</p>
+                      <p className="font-bold text-gray-900">{t('checkout.internationalCard')}</p>
+                      <p className="text-xs text-gray-500">{t('checkout.internationalCardDesc')}</p>
                     </div>
                     <div className="flex gap-2 text-[#eb001b]">
                         <i className="fa-brands fa-cc-visa text-3xl text-[#1a1f71]"></i>
@@ -510,11 +507,11 @@ const Checkout = () => {
                   {paymentMethod === 'visa' && (
                     <div className="ml-9 p-5 bg-white rounded-xl border border-gray-200 shadow-sm animate-fade-in-up">
                       <div className="flex items-start justify-between mb-4 border-b border-gray-100 pb-3">
-                         <p className="text-sm font-bold text-gray-800">Nhập thông tin Thẻ Tín Dụng / Ghi nợ:</p>
+                         <p className="text-sm font-bold text-gray-800">{t('checkout.cardInfoPrompt')}</p>
                          <i className="fa-solid fa-lock text-green-600" title="Secured by PayPal"></i>
                       </div>
                       <div className="bg-gray-50 p-4 rounded-xl mb-4 border border-gray-100 text-sm italic text-gray-600 text-center">
-                        * Thông tin thẻ của bạn được mã hóa an toàn 256-bit qua hệ thống PayPal.
+                        {t('checkout.cardEncryptionNote')}
                       </div>
                       <PayPalScriptProvider options={{ "client-id": import.meta.env.VITE_PAYPAL_CLIENT_ID || "test", currency: "USD", intent: "capture" }}>
                         {totalPrice > 0 ? (
@@ -594,15 +591,15 @@ const Checkout = () => {
                       ${orderStatus === 'processing' ? 'bg-blue-400 cursor-not-allowed text-white' : 'bg-[#006ce4] hover:bg-[#003b95] text-white active:scale-[0.98] shadow-blue-500/20'}`}
                   >
                     {orderStatus === 'processing' ? (
-                      <><i className="fa-solid fa-circle-notch fa-spin mr-2"></i> Đang xử lý...</>
+                      <><i className="fa-solid fa-circle-notch fa-spin mr-2"></i> {t('checkout.processing')}</>
                     ) : (
-                      <><i className="fa-solid fa-lock mr-2"></i> {t('checkout.confirmPayment', 'Hoàn tất thanh toán')}</>
+                      <><i className="fa-solid fa-lock mr-2"></i> {t('checkout.confirmPayment')}</>
                     )}
                   </button>
                 ) : (
                   <div className="w-full text-center bg-blue-50 text-[#00457C] font-semibold py-4 rounded-xl transition-all duration-200 text-sm border border-blue-200 border-dashed animate-pulse">
                     <i className="fa-solid fa-arrow-left mr-2"></i>
-                    Bấm khung bảo mật của đối tác ở phần bên trái tài khoản
+                    {t('checkout.partnerSecurityNote')}
                   </div>
                 )}
 
@@ -645,11 +642,11 @@ const Checkout = () => {
                   ${selectedWallet === 'zalopay' ? 'text-blue-600' : ''}
                   ${selectedWallet === 'vnpay' ? 'text-red-600' : ''}
                `}>
-                  Thanh toán bằng {selectedWallet === 'momo' ? 'MoMo' : selectedWallet === 'zalopay' ? 'ZaloPay' : 'VNPay'}
+                  {t('checkout.payWith', { wallet: selectedWallet === 'momo' ? 'MoMo' : selectedWallet === 'zalopay' ? 'ZaloPay' : 'VNPay' })}
                </h3>
-               <p className="text-sm text-gray-500">Mở ứng dụng ví và quét mã bên dưới</p>
+               <p className="text-sm text-gray-500">{t('checkout.scanQrNote')}</p>
                <div className="mt-3 inline-block bg-gray-50 px-4 py-2 rounded-full border border-gray-200">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-600">Đơn hàng: </span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-gray-600">{t('checkout.orderLabel')} </span>
                   <span className="text-sm font-extrabold text-gray-900">{bookingCode}</span>
                </div>
             </div>
@@ -673,12 +670,12 @@ const Checkout = () => {
                ${selectedWallet === 'vnpay' ? 'bg-red-100 text-red-700 border-red-200' : ''}
             `}>
                <i className="fa-solid fa-circle-notch fa-spin text-lg"></i>
-               {t('checkout.waitingPayment', 'Đang chờ bạn quét mã...')}
+               {t('checkout.waitingForScan')}
             </div>
 
             <div className="flex items-center justify-center gap-2 mb-4 text-xs text-gray-400">
                <i className="fa-regular fa-clock"></i>
-               Mã hết hạn sau: <span className="font-bold text-gray-600">{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</span>
+               {t('checkout.codeExpiresIn')} <span className="font-bold text-gray-600">{Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}</span>
             </div>
 
             {/* Nút giả lập thanh toán (Dành cho bản vẽ Demo) */}
@@ -686,7 +683,7 @@ const Checkout = () => {
               onClick={handleQrScanned}
               className="w-full mt-2 py-3 bg-gray-900 text-white rounded-lg font-bold hover:bg-black transition shadow flex items-center justify-center gap-2 text-sm"
             >
-              <i className="fa-solid fa-bolt text-yellow-500"></i> Mô phỏng thanh toán thành công
+              <i className="fa-solid fa-bolt text-yellow-500"></i> {t('checkout.simulateSuccess')}
             </button>
           </div>
         </div>

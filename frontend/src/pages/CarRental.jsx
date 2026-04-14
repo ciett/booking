@@ -44,7 +44,7 @@ const CarRental = () => {
 
   const handleSearch = async () => {
     if (!pickupCity || !pickupDatetime) {
-      message.warning(t('common.pleaseSelectPickupInfo') || "Vui lòng chọn địa điểm nhận và ngày giờ");
+      message.warning(t('carRental.fillSearchInfo') || t('common.pleaseSelectPickupInfo') || "Vui lòng chọn địa điểm nhận và ngày giờ");
       return;
     }
     setLoading(true);
@@ -161,7 +161,7 @@ const CarRental = () => {
                     className="w-full font-medium"
                     format="DD/MM/YYYY HH:mm"
                     showTime={{ format: 'HH:mm' }}
-                    placeholder={['Ngày & giờ nhận xe', 'Ngày & giờ trả xe']}
+                    placeholder={[t('carRental.pickupDateTime') || 'Ngày & giờ nhận xe', t('carRental.dropoffDateTime') || 'Ngày & giờ trả xe']}
                     onChange={(dates) => setPickupDatetime(dates)}
                     separator={<i className="fa-solid fa-arrow-right text-gray-300 text-xs shrink-0"></i>}
                   />
@@ -199,13 +199,13 @@ const CarRental = () => {
                             <p className="text-2xl font-black text-[#0a0b0d] group-hover:text-[#006ce4] transition-colors">{car.carModel}</p>
                         </div>
                         <div className="bg-blue-50 text-[#006ce4] px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest border border-blue-50">
-                            Đảm bảo nhất
+                            {t('carRental.bestValue') || 'Đảm bảo nhất'}
                         </div>
                       </div>
                       
                       <div className="flex gap-4 mb-4 font-bold text-gray-400">
                         <span className="flex items-center gap-1.5"><i className="fa-solid fa-user-group text-xs"></i> {car.seats} Ghế</span>
-                        <span className="flex items-center gap-1.5"><i className="fa-solid fa-gear text-xs"></i> Tự động</span>
+                        <span className="flex items-center gap-1.5"><i className="fa-solid fa-gear text-xs"></i> {t('carRental.automatic') || 'Tự động'}</span>
                       </div>
 
                       <div className="text-[13px] bg-gray-50 text-gray-500 p-3 rounded-xl mb-6 font-medium italic">
@@ -230,11 +230,11 @@ const CarRental = () => {
                           <div className="space-y-4">
                             <div className="bg-blue-50 p-5 rounded-2xl flex items-center justify-between border border-blue-100">
                                 <div>
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Dịch vụ bởi</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('carRental.providedBy') || 'Dịch vụ bởi'}</p>
                                     <p className="text-xl font-black text-[#003580]">{car.companyName}</p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Tổng cộng</p>
+                                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">{t('carRental.total') || 'Tổng cộng'}</p>
                                     <p className="text-xl font-black text-[#0a0b0d]">{car.totalPrice.toLocaleString('vi-VN')} đ</p>
                                 </div>
                             </div>
@@ -243,7 +243,7 @@ const CarRental = () => {
                         footer={
                           <button
                             className="bg-[#006ce4] text-white w-full py-4 rounded-xl font-black hover:bg-[#003b95] transition shadow-lg text-lg uppercase"
-                            onClick={() => navigate(`/checkout?type=car&name=${encodeURIComponent(car.carModel + ' - ' + car.companyName)}&price=${car.totalPrice}&details=${encodeURIComponent(JSON.stringify({ "Nhận tại": car.location?.city }))}`)}
+                            onClick={() => navigate(`/checkout?type=car&name=${encodeURIComponent(car.carModel + ' - ' + car.companyName)}&price=${car.totalPrice}&details=${encodeURIComponent(JSON.stringify({ [t('carRental.pickupAt') || "Nhận tại"]: car.location?.city }))}`)}
                           >
                             {t('carRental.continueBooking')}
                           </button>
@@ -260,7 +260,7 @@ const CarRental = () => {
         {/* Why Us... */}
         {results.length === 0 && (
           <div className="max-w-6xl mx-auto px-4 mt-20 w-full animate-fade-in-up">
-            <h2 className="text-3xl font-black mb-10 text-[#0a0b0d] text-center">Hành trình thoải mái hơn cùng Booking.com</h2>
+            <h2 className="text-3xl font-black mb-10 text-[#0a0b0d] text-center">{t('carRental.heroSectionTitle') || 'Hành trình thoải mái hơn cùng Booking.com'}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {[
                   { icon: 'fa-calendar-xmark', title: t('carRental.freeCancellation'), desc: t('carRental.freeCancellationDesc'), color: '#10b981' },

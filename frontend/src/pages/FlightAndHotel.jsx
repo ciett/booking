@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DatePicker, Select, InputNumber, ConfigProvider, message } from 'antd';
+import { DatePicker, Select, InputNumber, ConfigProvider, message, Popover } from 'antd';
 import dayjs from 'dayjs';
 import axios from 'axios';
 import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
@@ -75,10 +75,9 @@ const FlightAndHotel = () => {
       savings: 15 - i * 2,
     }));
   };
-
   const handleSearch = () => {
     if (!departureCode || !destination || !dates) {
-      message.warning(t('common.pleaseSelectOriginDest') || "Vui lòng chọn điểm đi, điểm đến và lịch trình");
+      message.warning(t('flightAndHotel.fillSearchInfo') || t('common.pleaseSelectOriginDest') || "Vui lòng chọn điểm đi, điểm đến và lịch trình");
       return;
     }
     setLoading(true);
@@ -120,7 +119,7 @@ const FlightAndHotel = () => {
                 <FlightTakeoffIcon className="text-gray-300 shrink-0" />
                 <Select 
                   showSearch 
-                  placeholder="Thành phố hoặc sân bay"
+                  placeholder={t('flightAndHotel.originPlaceholder')}
                   variant="borderless" 
                   className="w-full font-bold text-lg min-w-0"
                   onChange={(val) => setDepartureCode(val)}
@@ -133,7 +132,7 @@ const FlightAndHotel = () => {
                 <HotelIcon className="text-gray-300 shrink-0" />
                 <Select 
                   showSearch 
-                  placeholder="Thành phố hoặc khách sạn"
+                  placeholder={t('flightAndHotel.destPlaceholder')}
                   variant="borderless" 
                   className="w-full font-bold text-lg min-w-0"
                   onChange={(val) => setDestination(val)}
@@ -146,7 +145,7 @@ const FlightAndHotel = () => {
                 <i className="fa-regular fa-calendar text-gray-300 text-lg shrink-0"></i>
                 <ConfigProvider theme={{ token: { colorPrimary: CB, borderRadius: 12 } }}>
                   <RangePicker 
-                    placeholder={['Ngày đi', 'Ngày về']}
+                    placeholder={[t('home.searchDateCheckIn') || 'Ngày đi', t('home.searchDateCheckOut') || 'Ngày về']}
                     disabledDate={disabledDate} 
                     variant="borderless"
                     className="w-full font-medium"
@@ -157,18 +156,41 @@ const FlightAndHotel = () => {
                 </ConfigProvider>
               </div>
 
-              {/* Số khách */}
-              <div className="flex items-center px-5 py-4 w-[140px] shrink-0 gap-2 hover:bg-gray-50 transition-colors cursor-pointer">
-                <GroupIcon className="text-gray-300 shrink-0" />
-                <InputNumber 
-                  min={1} 
-                  value={guests} 
-                  onChange={(val) => setGuests(val)} 
-                  variant="borderless"
-                  className="w-full font-bold text-lg min-w-0"
-                  controls={false}
-                />
-              </div>
+               <Popover 
+                 trigger="click" 
+                 placement="bottom"
+                 content={
+                   <div className="p-4 w-64 space-y-4">
+                     <div className="flex items-center justify-between">
+                       <div>
+                         <p className="font-bold text-gray-900 leading-none mb-1">{t('home.searchAdults') || 'Người lớn'}</p>
+                         <p className="text-xs text-gray-400 font-medium">{t('checkout.fillRequired', 'Thông tin bắt buộc')}</p>
+                       </div>
+                       <div className="flex items-center gap-3">
+                         <button 
+                           onClick={(e) => { e.stopPropagation(); setGuests(Math.max(1, guests - 1)); }}
+                           className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:border-[#006ce4] hover:text-[#006ce4] transition-all font-bold"
+                         >-</button>
+                         <span className="font-black text-base w-4 text-center">{guests}</span>
+                         <button 
+                           onClick={(e) => { e.stopPropagation(); setGuests(guests + 1); }}
+                           className="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center hover:border-[#006ce4] hover:text-[#006ce4] transition-all font-bold"
+                         >+</button>
+                       </div>
+                     </div>
+                   </div>
+                 }
+               >
+                 <div className="flex items-center px-5 py-4 w-[160px] shrink-0 gap-3 hover:bg-gray-50 transition-colors cursor-pointer border-l border-gray-100 first:border-l-0">
+                   <GroupIcon className="text-gray-300 shrink-0" />
+                   <div className="flex flex-col min-w-0">
+                     <span className="text-[11px] font-bold text-gray-400 uppercase tracking-tighter leading-none mb-1">{t('flightAndHotel.guests') || 'Số khách'}</span>
+                     <span className="font-black text-gray-900 text-lg leading-tight truncate">
+                       {guests} {t('home.searchAdults') || 'Người lớn'}
+                     </span>
+                   </div>
+                 </div>
+               </Popover>
 
               {/* CTA */}
               <div className="shrink-0 p-2">
@@ -224,7 +246,7 @@ const FlightAndHotel = () => {
                         </div>
                         <div className="flex items-center gap-2 text-[13px] text-gray-500 mb-4 bg-gray-50 p-2.5 rounded-xl">
                           <i className="fa-regular fa-moon text-[#003580] font-bold"></i>
-                          <span className="font-medium">{pkg.nights} {t('flightAndHotel.nights')} - Bao gồm bữa sáng</span>
+                          <span className="font-medium">{pkg.nights} {t('flightAndHotel.nights')} - {t('flightAndHotel.breakfastIncluded')}</span>
                         </div>
                       </div>
 
@@ -265,7 +287,7 @@ const FlightAndHotel = () => {
                                     <p className="text-3xl font-black text-[#0a0b0d]">Tổng: {(pkg.packagePrice * guests).toLocaleString('vi-VN')} <span className="text-sm">đ</span></p>
                                 </div>
                                 <button
-                                    onClick={() => navigate(`/checkout?type=package&name=${encodeURIComponent(pkg.hotel + ' + ' + pkg.airline)}&price=${pkg.packagePrice * guests}&details=${encodeURIComponent(JSON.stringify({ [t('flightAndHotel.route')]: pkg.originCity + ' → ' + pkg.destCity, 'Khách': guests }))}`)}
+                                    onClick={() => navigate(`/checkout?type=package&name=${encodeURIComponent(pkg.hotel + ' + ' + pkg.airline)}&price=${pkg.packagePrice * guests}&details=${encodeURIComponent(JSON.stringify({ [t('flightAndHotel.route')]: pkg.originCity + ' → ' + pkg.destCity, [t('flightAndHotel.guestsLabel')]: guests }))}`)}
                                     className="bg-[#006ce4] text-white w-full py-4 rounded-xl font-black hover:bg-[#003b95] transition shadow-lg text-lg uppercase"
                                 >
                                     {t('flightAndHotel.bookPackage')}
@@ -288,9 +310,9 @@ const FlightAndHotel = () => {
               <h2 className="text-3xl font-black mb-10 text-[#0a0b0d] text-center">{t('flightAndHotel.whyBookLabel')}</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                   {[
-                      { icon: 'fa-tags', color: '#10b981', title: t('flightAndHotel.whyBook1'), desc: 'Giá trọn gói luôn rẻ hơn 15-20% so với đặt lẻ từng dịch vụ.' },
-                      { icon: 'fa-calendar-check', color: '#006ce4', title: t('flightAndHotel.whyBook2'), desc: 'Chỉ một lần đặt duy nhất cho cả vé máy bay và phòng khách sạn.' },
-                      { icon: 'fa-headset', color: '#f59e0b', title: t('flightAndHotel.whyBook3'), desc: 'Hỗ trợ đồng thời cho cả hành trình bay và lưu trú của bạn.' }
+                      { icon: 'fa-tags', color: '#10b981', title: t('flightAndHotel.whyBook1'), desc: t('flightAndHotel.whyBook1Desc') },
+                      { icon: 'fa-calendar-check', color: '#006ce4', title: t('flightAndHotel.whyBook2'), desc: t('flightAndHotel.whyBook2Desc') },
+                      { icon: 'fa-headset', color: '#f59e0b', title: t('flightAndHotel.whyBook3'), desc: t('flightAndHotel.whyBook3Desc') }
                   ].map((item, idx) => (
                     <div key={idx} className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
                         <div className="w-16 h-16 rounded-[20px] flex items-center justify-center mx-auto mb-6 text-2xl group-hover:scale-110 transition-transform" style={{ backgroundColor: item.color + '15', color: item.color }}>
